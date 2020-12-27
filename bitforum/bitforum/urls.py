@@ -17,8 +17,10 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import path, include
 from posts import urls
+from .views import profileTest
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('post/',include(urls))
+    path('post/',include(urls)),
+    path('',profileTest)
 ]
