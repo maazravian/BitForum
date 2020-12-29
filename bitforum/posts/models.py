@@ -46,6 +46,9 @@ class FollowersFollowings(models.Model):
     followerId = models.ForeignKey(User, related_name='follower', on_delete=models.CASCADE)
     followingId = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
 
+
+    def __str__(self):
+        return str(self.followerId.email + " --> " + self.followingId.email)
 # class Followings(models.Model):
 #     userId = models.ForeignKey(User, related_name='user', on_delete=models.CASCADE)
 #     followingId = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE,null=True,blank=True)
