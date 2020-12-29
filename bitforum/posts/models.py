@@ -34,10 +34,19 @@ class Contains(models.Model):
 
 class Upvote(models.Model):
     postId = models.ForeignKey(Post,related_name='upvote',on_delete=models.CASCADE)
-    userId = models.ForeignKey(User,related_name='upvote',on_delete=models.CASCADE)
+    userId = models.ForeignKey(User,related_name='upvote',on_delete=models.CASCADE,default='')
 
 
 class Downvote(models.Model):
     postId = models.ForeignKey(Post, related_name='downvote', on_delete=models.CASCADE)
-    userId = models.ForeignKey(User, related_name='downvote', on_delete=models.CASCADE)
+    userId = models.ForeignKey(User, related_name='downvote', on_delete=models.CASCADE,default='')
 
+class FollowersFollowings(models.Model):
+
+    followerId = models.ForeignKey(User, related_name='follower', on_delete=models.CASCADE)
+    followingId = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
+
+# class Followings(models.Model):
+#     userId = models.ForeignKey(User, related_name='user', on_delete=models.CASCADE)
+#     followingId = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE,null=True,blank=True)
+#     topicId = models.ForeignKey(Topic, related_name='topic', on_delete=models.CASCADE,null=True,blank=True)

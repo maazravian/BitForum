@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from posts.models import User
+from posts.models import *
 from django.shortcuts import get_object_or_404
 
 
@@ -17,9 +17,39 @@ def checkLogin(request):
         password = request.POST['password']
         user = User.objects.filter(email = email,password=password)
         if user.exists():
-            return redirect(profileTest)
+            request.session['email'] = email
+            return redirect(home)
         else:
             return redirect(login_signup_page)
 
 
+def home(request):
 
+    if 'email' in request.session:
+        user = User.objects.get(email=request.session['email'])
+
+        followers_count = FollowersFollowings.objects.filter(followingId=user.id)
+        following_count = FollowersFollowings.objects.filter(followerId=user.id)
+
+        allUser = User.objects.all()
+        people_you_may_know = []
+
+
+        for u in allUser:
+            if u.email == request.session['email']:
+                continue
+            else:
+                people_you_may_know.append(u)
+
+
+        print(people_you_may_know)
+
+
+        return render(request,'news-feed.html',{'user':user,'followers_count':len(followers_count),'following_count':len(following_count),'people':people_you_may_know})
+    else:
+        return redirect(login_signup_page)
+
+
+def logout(request):
+    del request.session['email']
+    return redirect(login_signup_page)

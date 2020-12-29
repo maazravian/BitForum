@@ -1,9 +1,9 @@
-
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>WorkWise Html Template</title>
+<title>Home</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="" />
 <meta name="keywords" content="" />
@@ -40,16 +40,7 @@
 									Home
 								</a>
 							</li>
-							<li>
-								<a href="#" title="">
-									<span><img src="{% static 'images/icon4.png' %}" alt=""></span>
-									Profiles
-								</a>
-								<ul>
-									<li><a href="#" title="">User Profile</a></li>
-									<li><a href="#" title="">my-profile-feed</a></li>
-								</ul>
-							</li>
+
 							<li>
 								<a href="#" title="" class="not-box-open">
 									<span><img src="{% static 'images/icon7.png' %}" alt=""></span>
@@ -71,6 +62,7 @@
 						  				</div>
 						  				<div class="notfication-details">
 							  				<div class="noty-user-img">
+							  					<img src="{% static 'images/resources/ny-img2.png' %}" alt="">
 							  					<img src="{% static 'images/resources/ny-img2.png' %}" alt="">
 							  				</div>
 							  				<div class="notification-info">
@@ -105,17 +97,18 @@
 						<a href="#" title=""><i class="fa fa-bars"></i></a>
 					</div><!--menu-btn end-->
 					<div class="user-account">
-						<div class="user-info">
-							<img src="http://via.placeholder.com/30x30" alt="">
-							<a href="#" title="">John</a>
+						<div class="user-info" >
+							<img src=" {{ user.profile_pic }} " height="30" width="30" alt="" style="margin-left:40px">
+
+
 							<i class="la la-sort-down"></i>
 						</div>
 						<div class="user-account-settingss">
 							<h3>Profile</h3>
 							<ul class="us-links">
-								<li><a href="#" title="">View Profile</a></li>	
+								<li><a href="#" title="">{{user.name}}</a></li>
 							</ul>
-							<h3 class="tc"><a href="#" title="">Logout</a></h3>
+							<h3 class="tc"><a href="/logout" title="">Logout</a></h3>
 						</div><!--user-account-settingss end-->
 					</div>
 				</div><!--header-data end-->
@@ -131,23 +124,23 @@
 									<div class="user-data full-width">
 										<div class="user-profile">
 											<div class="username-dt">
-												<div class="usr-pic">
-													<img src="http://via.placeholder.com/100x100" alt="">
+												<div class="usr-pic" style="height:120;width:100;">
+													<img src=" {{  user.profile_pic }} " height="110" width="100" alt="">
 												</div>
 											</div><!--username-dt end-->
 											<div class="user-specs">
-												<h3>John Doe</h3>
-												<span>Graphic Designer at Self Employed</span>
+												<h3> {{ user.name }} </h3>
+												<span>{{ user.status }}</span>
 											</div>
 										</div><!--user-profile end-->
 										<ul class="user-fw-status">
 											<li>
 												<h4>Following</h4>
-												<span>34</span>
+												<span>{{ following_count }}</span>
 											</li>
 											<li>
 												<h4>Followers</h4>
-												<span>155</span>
+												<span>{{ followers_count }}</span>
 											</li>
 										</ul>
 									</div><!--user-data end-->
@@ -157,14 +150,16 @@
 											<i class="la la-ellipsis-v"></i>
 										</div><!--sd-title end-->
 										<div class="suggestions-list">
+											{% for i in people %}
 											<div class="suggestion-usd">
-												<img src="http://via.placeholder.com/35x35" alt="">
+												<img src="{{ i.profile_pic }}" height="35" width="35" alt="">
 												<div class="sgt-text">
-													<h4>Jessica William</h4>
-													<span>Graphic Designer</span>
+													<h4>{{ i.name }}</h4>
+													<span>{{ i.status }}</span>
 												</div>
 												<span><i class="la la-plus"></i></span>
 											</div>
+											{% endfor %}
 											<div class="view-more">
 												<a href="#" title="">View More</a>
 											</div>
@@ -175,13 +170,63 @@
 							<div class="col-lg-6 col-md-8 no-pd">
 								<div class="main-ws-sec">
 									<div class="post-topbar">
-										<div class="user-picy">
-											<img src="http://via.placeholder.com/100x100" alt="">
+										<div class="user-picy" >
+											<img src="{{user.profile_pic}}"  alt="">
 										</div>
 										<div class="post-st">
 											<ul>
 												<li><a class="post_project" href="#" title="">Add a post</a></li>
 											</ul>
+											<div class="post-popup pst-pj">
+			<div class="post-project">
+				<h3>Post a project</h3>
+				<div class="post-project-fields">
+					<form>
+						<div class="row">
+							<div class="col-lg-12">
+								<input type="text" name="title" placeholder="Title">
+							</div>
+							<div class="col-lg-12">
+								<div class="inp-field">
+									<select>
+										<option>Category</option>
+										<option>Category 1</option>
+										<option>Category 2</option>
+										<option>Category 3</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-lg-12">
+								<input type="text" name="skills" placeholder="Skills">
+							</div>
+							<div class="col-lg-12">
+								<div class="price-sec">
+									<div class="price-br">
+										<input type="text" name="price1" placeholder="Price">
+										<i class="la la-dollar"></i>
+									</div>
+									<span>To</span>
+									<div class="price-br">
+										<input type="text" name="price1" placeholder="Price">
+										<i class="la la-dollar"></i>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-12">
+								<textarea name="description" placeholder="Description"></textarea>
+							</div>
+							<div class="col-lg-12">
+								<ul>
+									<li><button class="active" type="submit" value="post">Post</button></li>
+									<li><a href="#" title="">Cancel</a></li>
+								</ul>
+							</div>
+						</div>
+					</form>
+				</div><!--post-project-fields end-->
+				<a href="#" title=""><i class="la la-times-circle-o"></i></a>
+			</div><!--post-project end-->
+		</div><!--post-project-popup end-->
 										</div><!--post-st end-->
 									</div><!--post-topbar end-->
 									<div class="posts-section">
