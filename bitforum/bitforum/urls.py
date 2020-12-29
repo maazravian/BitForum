@@ -17,12 +17,16 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import path, include
 from posts import urls
-from .views import profileTest,loginTest,userTest
+from .views import profileTest,login_signup_page,checkLogin
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('post/',include(urls)),
-    path('',profileTest),
-    path('login',loginTest),
-    path('user',userTest),
+    path('profile',profileTest),
+    path('login',login_signup_page),
+    path('checkLogin',checkLogin),
 ]
+
+urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
