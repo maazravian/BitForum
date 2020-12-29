@@ -17,10 +17,12 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import path, include
 from posts import urls
-from .views import profileTest
+from .views import profileTest,loginTest,userTest
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('post/',include(urls)),
-    path('',profileTest)
+    path('',profileTest),
+    path('login',loginTest),
+    path('user',userTest),
 ]
