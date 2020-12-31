@@ -53,3 +53,11 @@ class FollowersFollowings(models.Model):
 #     userId = models.ForeignKey(User, related_name='user', on_delete=models.CASCADE)
 #     followingId = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE,null=True,blank=True)
 #     topicId = models.ForeignKey(Topic, related_name='topic', on_delete=models.CASCADE,null=True,blank=True)
+
+
+class TopicFollower(models.Model):
+    followerId = models.ForeignKey(User, related_name='user', on_delete=models.CASCADE)
+    topicId = models.ForeignKey(Topic,related_name='followedTopic',on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.topicId.topic_name

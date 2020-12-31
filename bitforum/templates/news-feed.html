@@ -155,7 +155,14 @@
 												<img src="{{ i.profile_pic }}" height="35" width="35" alt="">
 												<div class="sgt-text">
 													<h4>{{ i.name }}</h4>
-													<span>{{ i.status }}</span>
+
+
+
+														<span>{{ i.status | slice:"0:15" | add:"...." }}</span>
+
+
+
+
 												</div>
 												<span><i class="la la-plus"></i></span>
 											</div>
@@ -284,7 +291,8 @@
 											{% for topic in suggested_topics %}
 											<div class="suggestion-usd">
 												<div class="sgt-text">
-													<h4>{{ topic.topic_name }}</h4>
+													<h4>{{ topic.t | slice:"0:20" | add:"...." }}</h4>
+													<span>{{ topic.count }}</span>
 												</div>
 												<span><i class="la la-plus"></i></span>
 											</div>
