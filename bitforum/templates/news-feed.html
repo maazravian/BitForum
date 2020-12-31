@@ -135,11 +135,50 @@
 										</div><!--user-profile end-->
 										<ul class="user-fw-status">
 											<li>
-												<h4>Following</h4>
+												<div class="container">
+													<h4><a href="#" title="" data-toggle="modal" data-target="#myModal">Following</h4>
+														<div class="modal fade" id="myModal" role="dialog">
+															<div class="modal-dialog">
+															   <div class="modal-content">
+															 	  <div class="modal-header">
+															 	  	<h4 class="modal-title">Following</h4>
+															 	    <button type="button" class="close" data-dismiss="modal">&times;</button>
+															 	      
+															 	  </div>
+															 	<div class="modal-body">
+															 	</div>
+															 	   <div class="modal-footer">
+															 		  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+															 	   </div>
+															 </div>
+															</div>
+														</div>
+														
+													
+												</div>
 												<span>{{ following_count }}</span>
 											</li>
 											<li>
-												<h4>Followers</h4>
+												<div class="container">
+                                                   <h4><a href="#"  data-toggle="modal" data-target="#myModal2">Followers</button>
+                                                     <div class="modal fade" id="myModal2" role="dialog">
+                                                      <div class="modal-dialog">
+                                                      	<div class="modal-content">
+                                                      		<div class="modal-header">
+                                                      			<h4 class="modal-title"  >Followers</h4>
+                                                      			<button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                      			 
+                                                      			  </div>
+                                                      			  <div class="modal-body">
+                                                      			   <p></p>
+                                                      			</div>
+                                                      			<div class="modal-footer">
+                                                      				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                      			</div>
+                                                      		</div>
+                                                      	</div>
+                                                      </div>
+                                                  </div>
 												<span>{{ followers_count }}</span>
 											</li>
 										</ul>
