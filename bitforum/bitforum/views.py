@@ -83,7 +83,8 @@ def home(request):
 
 
 
-        return render(request,'news-feed.html',{'user':user,'followers_count':len(followers_count),'following_count':len(following_count)+len(followed_topics),'people':people_you_may_know,'suggested_topics':topics_with_follower_count})
+        return render(request,'news-feed.html',{'user':user,'followers_count':len(followers_count),'following_count':len(following_count)+len(followed_topics),'people':people_you_may_know,'suggested_topics':topics_with_follower_count,'myfollowers':followers_count,'myfollowing':following_count
+                                                ,'mytopics':followed_topics})
     else:
         return redirect(login_signup_page)
 
