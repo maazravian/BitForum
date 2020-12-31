@@ -42,10 +42,15 @@ def home(request):
                 people_you_may_know.append(u)
 
 
+        people_you_may_know=people_you_may_know[0:4]
         print(people_you_may_know)
 
+        topics = Topic.objects.all()
+        topics=topics[0:4]
+        print(topics)
 
-        return render(request,'news-feed.html',{'user':user,'followers_count':len(followers_count),'following_count':len(following_count),'people':people_you_may_know})
+
+        return render(request,'news-feed.html',{'user':user,'followers_count':len(followers_count),'following_count':len(following_count),'people':people_you_may_know,'suggested_topics':topics})
     else:
         return redirect(login_signup_page)
 
