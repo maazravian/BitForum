@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>WorkWise Html Template</title>
+<title>Profile_feed</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="" />
 <meta name="keywords" content="" />
@@ -47,16 +47,7 @@
 									Home
 								</a>
 							</li>
-							<li>
-								<a href="#" title="">
-									<span><img src="{% static 'images/icon4.png' %}" alt=""></span>
-									Profiles
-								</a>
-								<ul>
-									<li><a href="#" title="">User Profile</a></li>
-									<li><a href="#" title="">my-profile-feed</a></li>
-								</ul>
-							</li>
+							
 							<li>
 								<a href="#" title="" class="not-box-open">
 									<span><img src="{% static 'images/icon7.png' %}" alt=""></span>
@@ -145,7 +136,7 @@
 						<div class="row">
 							<div class="col-lg-3">
 								<div class="main-left-sidebar">
-									<div class="user_profile">
+									<div class="user_profile ">
 										<div class="user-pro-img">
 											<img src="{{user.profile_pic}}" alt="" width="170" height="170">
 											<a href="#" title=""><i class="fa fa-camera"></i></a>
@@ -154,45 +145,126 @@
 											
 											<ul class="flw-status">
 												<li>
-													<span>Following</span>
-													<b>34</b>
-												</li>
-												<li>
-													<span>Followers</span>
-													<b>155</b>
-												</li>
+												<div class="container">
+													<h4><a href="#" title="" data-toggle="modal" data-target="#myModal">Following</a></h4>
+														<div class="modal fade" id="myModal" role="dialog">
+															<div class="modal-dialog">
+															   <div class="modal-content">
+															 	  <div class="modal-header">
+															 	  	<h4 class="modal-title">Following</h4>
+															 	    <button type="button" class="close" data-dismiss="modal">&times;</button>
+															 	      
+															 	  </div>
+															 	<div class="modal-body">
+																	<button class="btn btn-primary btn-sm" id="btn-people" style="cursor:pointer" disabled>People</button>
+																	<button class="btn btn-primary btn-sm" id="btn-topic" style="cursor:pointer">Topics</button>
+<!--																Following Modal	-->
+																	<div class="people-data" id="people-data">
+
+
+
+
+
+
+
+																				<div class="suggestions-list">
+																				{% for following in myfollowing %}
+																				<div class="suggestion-usd">
+																					<img src="{{ following.followingId.profile_pic }}" height="35" width="35" alt="">
+																					<div class="sgt-text">
+																						<p>{{ following.followingId.name }}</p>
+
+																					</div>
+																					<span><button class="btn btn-danger btn-sm" style="cursor:pointer"> Unfollow</button></span>
+																				</div>
+
+																				{% endfor %}
+
+																			</div><!--suggestions-list end-->
+
+																	</div>
+																	<div style="display:none" class="topic-data" id="topic-data">
+
+
+
+
+
+																			<div class="suggestions-list">
+																				{% for topic in mytopics %}
+																				<div class="suggestion-usd">
+																					<div class="sgt-text">
+																						<h2>{{ topic.topicId.topic_name }}</h2>
+
+																					</div>
+																					<span><button class="btn btn-danger btn-sm" style="cursor:pointer"> Unfollow</button></span>
+																				</div>
+
+																				{% endfor %}
+
+																			</div><!--suggestions-list end-->
+
+																	</div>
+
+															 	</div>
+															 	   <div class="modal-footer">
+															 		  <button type="button" class="btn btn-default" style="cursor:pointer" data-dismiss="modal">Close</button>
+															 	   </div>
+															 </div>
+															</div>
+														</div>
+														
+													
+												</div>
+												<span>{{ following_count }}</span>
+											</li>
+											<li>
+												<div class="container">
+													<h4><a href="#"  data-toggle="modal" data-target="#myModal2">Followers</a></h4>
+                                                     <div class="modal fade" id="myModal2" role="dialog">
+                                                      <div class="modal-dialog">
+                                                      	<div class="modal-content">
+                                                      		<div class="modal-header">
+                                                      			<h4 class="modal-title"  >Followers</h4>
+                                                      			<button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                      			 
+                                                      			  </div>
+                                                      			  <div class="modal-body">
+                                                      			   <p></p>
+
+
+
+
+
+																	  <div class="suggestions-list">
+																		{%  for follower in myfollowers  %}
+																		<div class="suggestion-usd">
+																			<img src="{{ follower.followerId.profile_pic }}" height="35" width="35" alt="">
+																			<div class="sgt-text">
+																				<p>{{ follower.followerId.name }}</p>
+
+																			</div>
+																			<span><button class="btn btn-danger btn-sm" style="cursor:pointer"> Remove</button></span>
+																		</div>
+
+																		{% endfor %}
+
+																	</div><!--suggestions-list end-->
+
+                                                      			</div>
+                                                      			<div class="modal-footer">
+                                                      				<button type="button" class="btn btn-default" style="cursor:pointer" data-dismiss="modal">Close</button>
+                                                      			</div>
+                                                      		</div>
+                                                      	</div>
+                                                      </div>
+                                                  </div>
+												<span>{{ followers_count }}</span>
+											</li>
 											</ul>
 										</div><!--user_pro_status end-->
 										
 									</div><!--user_profile end-->
-									<div class="suggestions full-width">
-										<div class="sd-title">
-											<h3>People you may know</h3>
-											
-										</div><!--sd-title end-->
-										<div class="suggestions-list">
-											<div class="suggestion-usd">
-												<img src="http://via.placeholder.com/35x35" alt="">
-												<div class="sgt-text">
-													<h4>Jessica William</h4>
-													<span>Graphic Designer</span>
-												</div>
-												<span><i class="la la-plus"></i></span>
-											</div>
-											<div class="suggestion-usd">
-												<img src="http://via.placeholder.com/35x35" alt="">
-												<div class="sgt-text">
-													<h4>John Doe</h4>
-													<span>PHP Developer</span>
-												</div>
-												<span><i class="la la-plus"></i></span>
-											</div>
-											
-											<div class="view-more">
-												<a href="#" title="">View More</a>
-											</div>
-										</div><!--suggestions-list end-->
-									</div><!--suggestions end-->
+									
 								</div><!--main-left-sidebar end-->
 							</div>
 							<div class="col-lg-6">
@@ -268,34 +340,35 @@
 								<div class="right-sidebar">
 									
 									<div class="suggestions full-width">
+										
+										
 										<div class="sd-title">
-											<h3>Suggested Topics</h3>
+											<h3>People you may know</h3>
 											
 										</div><!--sd-title end-->
 										<div class="suggestions-list">
 											<div class="suggestion-usd">
-												
+												<img src="http://via.placeholder.com/35x35" alt="">
 												<div class="sgt-text">
-													<h4>Bootstrap</h4>
-													
+													<h4>Jessica William</h4>
+													<span>Graphic Designer</span>
 												</div>
 												<span><i class="la la-plus"></i></span>
 											</div>
-
 											<div class="suggestion-usd">
-												
+												<img src="http://via.placeholder.com/35x35" alt="">
 												<div class="sgt-text">
-													<h4>Django-python</h4>
-									
+													<h4>John Doe</h4>
+													<span>PHP Developer</span>
 												</div>
 												<span><i class="la la-plus"></i></span>
 											</div>
-											
 											
 											<div class="view-more">
 												<a href="#" title="">View More</a>
 											</div>
 										</div><!--suggestions-list end-->
+									</div><!--suggestions end-->
 									</div><!--suggestions end-->
 									
 
