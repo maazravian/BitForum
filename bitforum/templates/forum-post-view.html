@@ -1,4 +1,4 @@
-
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,16 +7,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="" />
 <meta name="keywords" content="" />
-<link rel="stylesheet" type="text/css" href="css/animate.css">
-<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="css/line-awesome.css">
-<link rel="stylesheet" type="text/css" href="css/line-awesome-font-awesome.min.css">
-<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
-<link rel="stylesheet" type="text/css" href="css/jquery.mCustomScrollbar.min.css">
-<link rel="stylesheet" type="text/css" href="lib/slick/slick.css">
-<link rel="stylesheet" type="text/css" href="lib/slick/slick-theme.css">
-<link rel="stylesheet" type="text/css" href="css/style.css">
-<link rel="stylesheet" type="text/css" href="css/responsive.css">
+<link rel="stylesheet" type="text/css" href="{% static 'css/animate.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/line-awesome.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/line-awesome-font-awesome.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.mCustomScrollbar.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'lib/slick/slick.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'lib/slick/slick-theme.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}">
 </head>
 
 
@@ -31,7 +31,7 @@
 			<div class="container">
 				<div class="header-data">
 					<div class="logo">
-						<a href="#" title=""><img src="images/logo.png" height="50" width="50" alt=""></a>
+						<a href="#" title=""><img src="{% static 'images/logo.png' %}" height="50" width="50" alt=""></a>
 					</div><!--logo end-->
 					<div class="search-bar">
 						<form>
@@ -43,14 +43,14 @@
 						<ul>
 							<li>
 								<a href="#" title="">
-									<span><img src="images/icon1.png"  alt=""></span>
+									<span><img src="{% static 'images/icon1.png' %}"  alt=""></span>
 									Home
 								</a>
 							</li>
 							
 							<li>
 								<a href="#" title="" class="not-box-open">
-									<span><img src="images/icon7.png" alt=""></span>
+									<span><img src="{% static 'images/icon7.png' %}" alt=""></span>
 									Notification
 								</a>
 								<div class="notification-box" >
@@ -61,7 +61,7 @@
 									<div class="nott-list">
 										<div class="notfication-details">
 							  				<div class="noty-user-img">
-							  					<img src="images/resources/ny-img1.png" alt="">
+							  					<img src="{% static 'images/resources/ny-img1.png' %}" alt="">
 							  				</div>
 							  				<div class="notification-info">
 							  					<h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
@@ -70,7 +70,7 @@
 						  				</div>
 						  				<div class="notfication-details">
 							  				<div class="noty-user-img">
-							  					<img src="images/resources/ny-img2.png" alt="">
+							  					<img src="{% static 'images/resources/ny-img2.png' %}" alt="">
 							  				</div>
 							  				<div class="notification-info">
 							  					<h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
@@ -79,7 +79,7 @@
 						  				</div>
 						  				<div class="notfication-details">
 							  				<div class="noty-user-img">
-							  					<img src="images/resources/ny-img3.png" alt="">
+							  					<img src="{% static 'images/resources/ny-img3.png' %}" alt="">
 							  				</div>
 							  				<div class="notification-info">
 							  					<h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
@@ -88,7 +88,7 @@
 						  				</div>
 						  				<div class="notfication-details">
 							  				<div class="noty-user-img">
-							  					<img src="images/resources/ny-img2.png" alt="">
+							  					<img src="{% static 'images/resources/ny-img2.png' %}" alt="">
 							  				</div>
 							  				<div class="notification-info">
 							  					<h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
@@ -191,7 +191,7 @@
 															</div>
 															<div class="comment">
 																<h3>John Smith</h3>
-																<span><img src="images/clock.png" alt=""> 3 min ago</span>
+																<span><img src="{% static 'images/clock.png' %}" alt=""> 3 min ago</span>
 																<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse at libero elit. Mauris ultrices sed lorem nec efficitur.</p>
 																<ul class="like-com" >
 														          <li>
@@ -210,7 +210,7 @@
 															</div>
 															<div class="comment">
 																<h3>John Doe</h3>
-																<span><img src="images/clock.png" alt=""> 3 min ago</span>
+																<span><img src="{% static 'images/clock.png' %}" alt=""> 3 min ago</span>
 																<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at.</p>
 																<ul class="like-com" >
 														          <li>
@@ -229,7 +229,7 @@
 															</div>
 															<div class="comment">
 																<h3>John Doe</h3>
-																<span><img src="images/clock.png" alt=""> 3 min ago</span>
+																<span><img src="{% static 'images/clock.png' %}" alt=""> 3 min ago</span>
 																<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at.</p>
 															    <ul class="like-com" >
 														          <li>
@@ -274,7 +274,7 @@
 									</li>
 									<li>
 										<i class="fa fa-comment" aria-hidden="true"></i>
-										<span>112</span>
+										<span><a  href="javascript:noOfComments()">112</a></span>
 									</li>
 									<li>
 										<i class="fa fa-eye"></i>
@@ -320,12 +320,20 @@
 
 
 
-<script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/popper.js"></script>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
-<script type="text/javascript" src="js/jquery.mCustomScrollbar.js"></script>
-<script type="text/javascript" src="lib/slick/slick.min.js"></script>
-<script type="text/javascript" src="js/script.js"></script>
+	<script>
+		function noOfComments(){
+			window.scrollTo(0, document.body.scrollHeight);
+		}
+	</script>
+
+
+
+<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/popper.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.mCustomScrollbar.js' %}"></script>
+<script type="text/javascript" src="{% static 'lib/slick/slick.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/script.js' %}"></script>
 
 
 </body>
