@@ -15,8 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+from .views import *
 
 urlpatterns = [
-
+    path('viewPost/<int:id>',view_post,name='view_post'),
 ]
