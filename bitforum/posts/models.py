@@ -60,4 +60,4 @@ class TopicFollower(models.Model):
     topicId = models.ForeignKey(Topic,related_name='followedTopic',on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.topicId.topic_name
+        return self.followerId.email + " --- > " +self.topicId.topic_name

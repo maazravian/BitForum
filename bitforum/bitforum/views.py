@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from posts.models import *
 from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
 
 
 def profileTest(request):
@@ -92,3 +93,15 @@ def home(request):
 def logout(request):
     del request.session['email']
     return redirect(login_signup_page)
+
+def deleteFollowing(request,fid):
+    FollowersFollowings.objects.filter(id=fid).delete()
+    return redirect(home)
+
+def unfollowTopic(request,tid):
+    TopicFollower.objects.filter(id=tid).delete()
+    return redirect(home)
+
+def removeFollower(request,fid):
+    FollowersFollowings.objects.filter(id=fid).delete()
+    return redirect(home)
