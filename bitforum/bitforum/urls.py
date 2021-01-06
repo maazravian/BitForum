@@ -23,16 +23,17 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('admin',admin.site.urls),
-    path('post/',include(urls)),
+    # path('admin',admin.site.urls),
     path('profile',profileTest),
     path('login',login_signup_page),
     path('checkLogin',checkLogin),
     path('',home),
-    path('logout',logout),
-    path('deleteFollowing/<int:fid>',deleteFollowing,name='deleteFollowing' ),
-    path('unfollowTopic/<int:tid>',unfollowTopic,name='unfollowTopic' ),
+    path('logout', logout),
+    path('deleteFollowing/<int:fid>', deleteFollowing,name='deleteFollowing'),
+    path('unfollowTopic/<int:tid>', unfollowTopic,name='unfollowTopic'),
     path('removeFollower/<int:fid>', removeFollower, name='removeFollower'),
+    path('post/<int:pid>', viewPost, name='viewPost'),
+    path('signup', signup)
 ]
 
 urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

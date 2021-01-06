@@ -7,7 +7,7 @@ class User(models.Model):
     name = models.TextField()
     password = models.TextField(max_length=15)
     status = models.TextField(max_length=250)
-    profile_pic = models.ImageField(upload_to='uploads/pfp/')
+    profile_pic = models.ImageField(upload_to='')
 
     def __str__(self):
         return self.email
@@ -17,7 +17,7 @@ class Post(models.Model):
     content = models.TextField()
     date_time = models.DateTimeField(auto_now_add=True)
     no_of_views = models.PositiveIntegerField(default=0)
-
+    user_id = models.ForeignKey(User,related_name='post_author',on_delete=models.CASCADE)
     def __str__(self):
         return self.title
 
