@@ -21,11 +21,12 @@ def checkLogin(request):
             request.session['email'] = email
             return redirect(home)
         else:
-            return redirect(login_signup_page)
+            return render(request,'sign-in.html',{'ucheck':'error'})
 
 
 def home(request):
-
+    from django.conf import settings
+    print(settings.MEDIA_URL)
     if 'email' in request.session:
         user = User.objects.get(email=request.session['email'])
 
@@ -105,3 +106,27 @@ def unfollowTopic(request,tid):
 def removeFollower(request,fid):
     FollowersFollowings.objects.filter(id=fid).delete()
     return redirect(home)
+
+def viewPost(request,pid):
+    post = Post.objects.get(id=pid)
+    return render(request,'post-view.html',{'post':post})
+
+def signup(request):
+    if request.method == 'POST':
+        username = request.POST['name']
+        email = request.POST['email']
+        password = request.POST['password']
+        repeatPassword = request.POST['repeat-password']
+        profilePic = request.FILES['profile_pic']
+        print(profilePic)
+        user = User.objects.filter(email = email)
+
+        if user.exists():
+            print(profilePic)
+            return redirect(login_signup_page)
+        else:
+            # profilePic = profilePic.replace(' ','%20')
+            usr = User(name=username, email=email, password=password,profile_pic=profilePic)
+            usr.save()
+            request.session['email'] = email
+            return redirect(home)

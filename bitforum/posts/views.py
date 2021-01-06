@@ -1,6 +1,5 @@
 from django.shortcuts import render
-
+from .models import *
 # Create your views here.
 
-def view_post(request,id):
-    return render(request,'forum-post-view.html')
+

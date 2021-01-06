@@ -136,10 +136,10 @@
 											<div class="post-bar" >
 												<div class="post_topbar" >
 													<div class="usy-dt">
-														<img src="http://via.placeholder.com/50x50" alt="">
+														<img src=" ../{{post.user_id.profile_pic}}" height="40" width="40" alt="">
 														<div class="usy-name">
-															<h3>John Doe</h3>
-															<span><img src="{% static 'images/clock.png' %}" alt="">3 min ago</span>
+															<h3>{{post.user_id.name}}</h3>
+															<span><img src="{% static 'images/clock.png' %}" alt="">{{post.date_time}}</span>
 														</div>
 													</div>
 													<div class="ed-opts">
@@ -153,10 +153,9 @@
 												</div>
 												
 												<div class="job_descp">
-													<a href="#"><h3>This is a demo Post title</h3></a>
+													<a href="#"><h3>{{post.title}}</h3></a>
 													
-													<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
-
+													<p>{{post.content}}</p>
 													<!-- topics -->
 													<ul class="skill-tags">
 														<li><a href="#" title="">HTML</a></li>
@@ -261,7 +260,7 @@
 							</div><!--post-comment-box end-->
 							
 						</div>
-						<div class="col-lg-4" style="margin-left: px">
+						<div class="col-lg-4" style="margin-left: 0px">
 							<div class="widget widget-feat">
 								<ul>
 									<li>
