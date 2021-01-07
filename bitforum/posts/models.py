@@ -61,3 +61,11 @@ class TopicFollower(models.Model):
 
     def __str__(self):
         return self.followerId.email + " --- > " +self.topicId.topic_name
+
+class Comment(models.Model):
+    userId = models.ForeignKey(User,related_name='commentAuthor',on_delete=models.CASCADE)
+    postId = models.ForeignKey(Post,related_name='on_post',on_delete=models.CASCADE)
+    content = models.TextField()
+    date_time = models.DateTimeField(auto_now_add=True)
+    no_of_up = models.PositiveIntegerField(default=0)
+    no_of_down = models.PositiveIntegerField(default=0)
