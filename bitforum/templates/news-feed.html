@@ -345,26 +345,30 @@
 		</div><!--post-project-popup end-->
 										</div><!--post-st end-->
 									</div><!--post-topbar end-->
+
+
 									<div class="posts-section">
+
+
+
+										{% for post in newsFeedPosts %}
 										<div class="post-bar">
+
 											<div class="post_topbar">
 												<div class="usy-dt">
-													<img src="http://via.placeholder.com/50x50" alt="">
+													<img src="{{post.user_id.profile_pic}}" height="40" width="40" alt="">
 													<div class="usy-name">
-														<h3>John Doe</h3>
-														<span><img src="{% static 'images/clock.png' %}" alt="">3 min ago</span>
+														<h3>{{post.user_id.name}}</h3>
+														<span><img src="{% static 'images/clock.png' %}" alt="">{{post.date_time}}</span>
 													</div>
 												</div>	
 											</div>
 											<div class="job_descp">
-												<h3>Senior Wordpress Developer</h3>
-												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
+												<a href="/post/{{post.id}}" ><h3 style="text-decoration: underline">{{post.title}}</h3></a>
+												<p>{{ post.content | slice:"0:200" | add:"...." }} <a href="/post/{{post.id}}" title="">view more</a></p>
 												<ul class="skill-tags">
-													<li><a href="#" title="">HTML</a></li>
-													<li><a href="#" title="">PHP</a></li>
-													<li><a href="#" title="">CSS</a></li>
-													<li><a href="#" title="">Javascript</a></li>
-													<li><a href="#" title="">Wordpress</a></li> 	
+													<li><a href="#" title="">Pending</a></li>
+
 												</ul>
 											</div>
 											<div class="job-status-bar">
@@ -378,7 +382,10 @@
 												<a><i class="la la-eye"></i>Views 50</a>
 											</div>
 										</div><!--post-bar end-->
-										
+
+										{% endfor %}
+
+
 										<div class="process-comm">
 											<div class="spinner">
 												<div class="bounce1"></div>

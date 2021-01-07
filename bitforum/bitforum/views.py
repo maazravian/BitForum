@@ -2,7 +2,13 @@ from django.shortcuts import render,redirect
 from posts.models import *
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
+import json
+from django.http import JsonResponse
+from django.db import models
 
+
+def viewProfile(request,uid):
+    return render(request,'user-profile.html')
 
 def profileTest(request):
     user = User.objects.all()
@@ -23,6 +29,12 @@ def checkLogin(request):
         else:
             return render(request,'sign-in.html',{'ucheck':'error'})
 
+# def checkLoginAjax(request):
+#
+#     u = request.POST.get('email',None)
+#     print(u)
+#
+#     return JsonResponse({'error':'error'})
 
 def home(request):
     from django.conf import settings
@@ -72,9 +84,18 @@ def home(request):
 
 
         people_you_may_know=people_you_may_know[0:4]
-        print(people_you_may_know)
+        # print(people_you_may_know)
 
 
+        postsToShow = []
+        print("###")
+        oneUserPosts = Post.objects.filter(user_id=user)
+        for i in following_count:
+            oneUserPosts = oneUserPosts | (Post.objects.filter(user_id = i.followingId))
+
+        postsToShow.append(oneUserPosts)
+        print(postsToShow)
+        postsToShow = postsToShow[0]
 
 
         topics = topics[0:4]
@@ -84,8 +105,7 @@ def home(request):
             topics_with_follower_count.append({'t':topic.topic_name,'count':str(len(TopicFollower.objects.filter(topicId=topic.id)))+" Followers"})
 
 
-
-        return render(request,'news-feed.html',{'user':user,'followers_count':len(followers_count),'following_count':len(following_count)+len(followed_topics),'people':people_you_may_know,'suggested_topics':topics_with_follower_count,'myfollowers':followers_count,'myfollowing':following_count
+        return render(request,'news-feed.html',{'newsFeedPosts':postsToShow,'user':user,'followers_count':len(followers_count),'following_count':len(following_count)+len(followed_topics),'people':people_you_may_know,'suggested_topics':topics_with_follower_count,'myfollowers':followers_count,'myfollowing':following_count
                                                 ,'mytopics':followed_topics})
     else:
         return redirect(login_signup_page)
@@ -109,7 +129,17 @@ def removeFollower(request,fid):
 
 def viewPost(request,pid):
     post = Post.objects.get(id=pid)
-    return render(request,'post-view.html',{'post':post})
+    post.no_of_views +=1
+    post.save()
+    commentsList = Comment.objects.filter(postId=pid)
+
+    topicsList = Contains.objects.filter(postId=pid)
+    print(topicsList)
+    upvotesList = Upvote.objects.filter(postId=pid)
+    downvotesList = Downvote.objects.filter(postId=pid)
+    currentUser = User.objects.get(email=request.session['email'])
+
+    return render(request,'post-view.html',{'currentUser':currentUser,'post':post,'topics':topicsList,'upvotesList':upvotesList,'upCount':len(upvotesList),'downvotesList':downvotesList,'downCount':len(downvotesList),'commentCount':len(commentsList),'comments':commentsList})
 
 def signup(request):
     if request.method == 'POST':
@@ -130,3 +160,4 @@ def signup(request):
             usr.save()
             request.session['email'] = email
             return redirect(home)
+

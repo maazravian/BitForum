@@ -33,7 +33,9 @@ urlpatterns = [
     path('unfollowTopic/<int:tid>', unfollowTopic,name='unfollowTopic'),
     path('removeFollower/<int:fid>', removeFollower, name='removeFollower'),
     path('post/<int:pid>', viewPost, name='viewPost'),
-    path('signup', signup)
+    path('signup', signup),
+    path('viewProfile/<int:uid>',viewProfile,name='viewProfile'),
+    #path('checkLoginAjax',checkLoginAjax,name='checkLoginAjax')
 ]
 
 urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

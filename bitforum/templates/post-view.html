@@ -31,7 +31,7 @@
 			<div class="container">
 				<div class="header-data">
 					<div class="logo">
-						<a href="#" title=""><img src="{% static 'images/logo.png' %}" height="50" width="50" alt=""></a>
+						<a href="../" title=""><img src="{% static 'images/logo.png' %}" height="50" width="50" alt=""></a>
 					</div><!--logo end-->
 					<div class="search-bar">
 						<form>
@@ -42,7 +42,7 @@
 					<nav>
 						<ul>
 							<li>
-								<a href="#" title="">
+								<a href="../" title="">
 									<span><img src="{% static 'images/icon1.png' %}"  alt=""></span>
 									Home
 								</a>
@@ -106,17 +106,17 @@
 					</div><!--menu-btn end-->
 					<div class="user-account">
 						<div class="user-info">
-							<img src="http://via.placeholder.com/30x30" alt="">
-							<a href="#" title="">John</a>
+							<img src="../{{currentUser.profile_pic}}" height="30"  width="30" alt="">
+
 							<i class="la la-sort-down"></i>
 						</div>
 						<div class="user-account-settingss">
 						
 							<h3>Profile</h3>
 							<ul class="us-links">
-								<li><a href="#" title="">View Profile</a></li>
+								<li><a href="/profile" title="">{{currentUser.name}}</a></li>
 							</ul>
-							<h3 class="tc"><a href="#" title="">Logout</a></h3>
+							<h3 class="tc"><a href="/logout" title="">Logout</a></h3>
 						</div><!--user-account-settingss end-->
 					</div>
 		</header>	
@@ -142,14 +142,7 @@
 															<span><img src="{% static 'images/clock.png' %}" alt="">{{post.date_time}}</span>
 														</div>
 													</div>
-													<div class="ed-opts">
-														<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
-														<ul class="ed-options">
-															<li><a href="#" title="">Edit Post</a></li>
-															<li><a href="#" title="">Delete</a></li>
-															
-														</ul>
-													</div>
+
 												</div>
 												
 												<div class="job_descp">
@@ -158,23 +151,24 @@
 													<p>{{post.content}}</p>
 													<!-- topics -->
 													<ul class="skill-tags">
-														<li><a href="#" title="">HTML</a></li>
-														<li><a href="#" title="">PHP</a></li>
-														<li><a href="#" title="">CSS</a></li>
-														<li><a href="#" title="">Javascript</a></li>
-														<li><a href="#" title="">Wordpress</a></li> 	
+														{% for topic in topics %}
+														<li><a href="#" title="">{{topic.topicId.topic_name}}</a></li>
+
+														{% endfor %}
 													</ul>
 												</div>
 												<div class="job-status-bar">
 													<ul class="like-com">
 														<li>
-															<a href="#"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i> Upvote</a>
-															<a href="#"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i> Downvote</a>
-															<a href="#"><i class="fa fa-comment" aria-hidden="true"></i> Comments</a>
+
+															<a href="#"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i> {{upCount}}</a>
+															<a href="#"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i>
+																{{downCount}}</a>
+															<a href="#"><i class="fa fa-comment" aria-hidden="true"></i>{{commentCount}}  Comments</a>
 														</li> 
 														
 													</ul>
-													<a><i class="la la-eye"></i>Views 50</a>
+													<a><i class="la la-eye"></i>Views {{post.no_of_views}}</a>
 												</div>
 											</div><!--post-bar end-->
 											<!--post-bar end-->
@@ -183,63 +177,35 @@
 											
 											<div class="comment-sec">
 												<ul>
+													{% for comment in comments %}
+
 													<li>
 														<div class="comment-list">
 															<div class="bg-img">
-																<img src="http://via.placeholder.com/40x40" alt="">
+																<img src="../{{ comment.userId.profile_pic }}" width="40" height="40" alt="">
 															</div>
 															<div class="comment">
-																<h3>John Smith</h3>
-																<span><img src="{% static 'images/clock.png' %}" alt=""> 3 min ago</span>
-																<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse at libero elit. Mauris ultrices sed lorem nec efficitur.</p>
+																<h3>{{ comment.userId.name }}</h3>
+																<span><img src="{% static 'images/clock.png' %}" alt=""> {{ comment.date_time }} </span>
+																<p> {{ comment.content }} </p>
 																<ul class="like-com" >
 														          <li>
-															        <a href="#"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i>2  </a>
-															        <a href="#"><i class="fa fa-arrow-circle-down"  style="margin-left: 10px" aria-hidden="true"></i>10</a>
-															
-														          </li> 
+															        <a href="#"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i> {{ comment.no_of_up }}  </a>
+															        <a href="#"><i class="fa fa-arrow-circle-down"  style="margin-left: 10px" aria-hidden="true"></i>{{ comment.no_of_down }}</a>
+
+														          </li>
 													           </ul>
 															</div>
 														</div><!--comment-list end-->
 													</li>
-													<li>
-														<div class="comment-list">
-															<div class="bg-img">
-																<img src="http://via.placeholder.com/40x40" alt="">
-															</div>
-															<div class="comment">
-																<h3>John Doe</h3>
-																<span><img src="{% static 'images/clock.png' %}" alt=""> 3 min ago</span>
-																<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at.</p>
-																<ul class="like-com" >
-														          <li>
-															        <a href="#"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i>2  </a>
-															        <a href="#"><i class="fa fa-arrow-circle-down" aria-hidden="true" style="margin-left: 10px"></i>10</a>
-															
-														          </li> 
-													           </ul>
-															</div>
-														</div><!--comment-list end-->
-													</li>
-													<li>
-														<div class="comment-list">
-															<div class="bg-img">
-																<img src="http://via.placeholder.com/40x40" alt="">
-															</div>
-															<div class="comment">
-																<h3>John Doe</h3>
-																<span><img src="{% static 'images/clock.png' %}" alt=""> 3 min ago</span>
-																<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at.</p>
-															    <ul class="like-com" >
-														          <li>
-															        <a href="#"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i>2  </a>
-															        <a href="#"><i class="fa fa-arrow-circle-down" aria-hidden="true" style="margin-left: 10px"></i>10</a>
-															
-														          </li> 
-													           </ul>
-															</div>
-														</div><!--comment-list end-->
-													</li>
+
+
+
+													{% endfor %}
+
+
+
+
 												</ul>
 											</div><!--comment-sec end-->
 										</div>
@@ -263,21 +229,77 @@
 						<div class="col-lg-4" style="margin-left: 0px">
 							<div class="widget widget-feat">
 								<ul>
+									<li  data-toggle="modal" data-target="#myModal" style="cursor: pointer">
+											<i class="fa fa-arrow-circle-up" style="color:#3c8dbc" aria-hidden="true"></i>
+										<span>{{upCount}}</span>
+									</li>
+
+									 <!-- Modal -->
+								  <div class="modal fade" id="myModal" role="dialog">
+									<div class="modal-dialog modal-sm">
+									  <div class="modal-content">
+										<div class="modal-header">
+											<h4 class="modal-title">Upvotes</h4>
+										  <button type="button" class="close" data-dismiss="modal" style="cursor: pointer">&times;</button>
+
+										</div>
+										<div class="modal-body">
+											<ul class="list-group" >
+
+											  {% for upvote in upvotesList %}
+													<a href="{% url 'viewProfile' upvote.userId.pk %}"> <li class="list-group-item" style="width: 100%;text-align: left">  {{upvote.userId.name}}</li></a>
+												{% endfor %}
+											</ul>
+
+										</div>
+
+									  </div>
+									</div>
+								  </div>
+
+
+
+
+
+
+
+
+									<li data-toggle="modal" data-target="#myModal2" style="cursor: pointer">
+										<i class="fa fa-arrow-circle-down" style="color: #ff1000" aria-hidden="true"></i>
+										<span>{{downCount}}</span>
+									</li>
+
+
+										 <!-- Modal -->
+								  <div class="modal fade" id="myModal2" role="dialog">
+									<div class="modal-dialog modal-sm">
+									  <div class="modal-content">
+										<div class="modal-header">
+											<h4 class="modal-title">Downvotes</h4>
+										  <button type="button" class="close" data-dismiss="modal" style="cursor: pointer">&times;</button>
+
+										</div>
+										<div class="modal-body">
+											<ul class="list-group" >
+
+											  {% for downvote in downvotesList %}
+													<a href="{% url 'viewProfile' downvote.userId.pk %}"> <li class="list-group-item" style="width: 100%;text-align: left">  {{downvote.userId.name}}</li></a>
+												{% endfor %}
+											</ul>
+
+										</div>
+
+									  </div>
+									</div>
+								  </div>
+
 									<li>
-											<i class="fa fa-arrow-circle-up" aria-hidden="true"></i>
-										<span>1185</span>
+										<i class="fa fa-comment" style="color: #28a745" aria-hidden="true"></i>
+										<span><a  href="javascript:noOfComments()">{{commentCount}}</a></span>
 									</li>
 									<li>
-										<i class="fa fa-arrow-circle-down" aria-hidden="true"></i>
-										<span>1165</span>
-									</li>
-									<li>
-										<i class="fa fa-comment" aria-hidden="true"></i>
-										<span><a  href="javascript:noOfComments()">112</a></span>
-									</li>
-									<li>
-										<i class="fa fa-eye"></i>
-										<span>1009</span>
+										<i class="fa fa-eye" style="color: black"></i>
+										<span>{{post.no_of_views}}</span>
 									</li>
 								</ul>
 							
