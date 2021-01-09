@@ -65,6 +65,8 @@ def myProfile(request):
         topics_with_follower_count.append(
             {'t': topic.topic_name, 'count': str(len(TopicFollower.objects.filter(topicId=topic.id))) + " Followers"})
 
+    people_you_may_know = people_you_may_know[0:4]
+
     return render(request, 'my-profile-feed.html',
                   {'newsFeedPosts': postsToShow, 'user': user, 'followers_count': len(followers_count),
                    'following_count': len(following_count) + len(followed_topics), 'people': people_you_may_know,
@@ -207,7 +209,7 @@ def home(request):
             onePost['downvote'] = len(Downvote.objects.filter(postId=p))
             onePost['comments'] = len(Comment.objects.filter(postId=p))
             topicListOfThatPost = []
-            contains = Contains.objects.filter(postId=i)
+            contains = Contains.objects.filter(postId=p)
             for j in contains:
                 topicListOfThatPost.append(Topic.objects.get(id=j.topicId.id))
             onePost['topicsList'] = topicListOfThatPost
@@ -236,17 +238,28 @@ def logout(request):
     del request.session['email']
     return redirect(login_signup_page)
 
-def deleteFollowing(request,fid):
-    FollowersFollowings.objects.filter(id=fid).delete()
-    return redirect(home)
+def deleteFollowing(request):
+    # FollowersFollowings.objects.filter(id=fid).delete()
+    # return redirect(home)
+    if request.method == 'POST':
+        id = request.POST.get('slug', None)
+        FollowersFollowings.objects.filter(id=id).delete()
+    ctx = {'message': 'Unfollowed User'}
+    return HttpResponse(json.dumps(ctx), content_type='application/json')
 
-def unfollowTopic(request,tid):
-    TopicFollower.objects.filter(id=tid).delete()
-    return redirect(home)
+def unfollowTopic(request):
+    if request.method == 'POST':
+        id = request.POST.get('slug', None)
+        TopicFollower.objects.filter(id=id).delete()
+    ctx = {'message': 'Unfollowed Topic'}
+    return HttpResponse(json.dumps(ctx), content_type='application/json')
 
-def removeFollower(request,fid):
-    FollowersFollowings.objects.filter(id=fid).delete()
-    return redirect(home)
+def removeFollower(request):
+    if request.method == 'POST':
+        id = request.POST.get('slug', None)
+        FollowersFollowings.objects.filter(id=id).delete()
+    ctx = {'message': 'removed Follower'}
+    return HttpResponse(json.dumps(ctx), content_type='application/json')
 
 def viewPost(request,pid):
     post = Post.objects.get(id=pid)
