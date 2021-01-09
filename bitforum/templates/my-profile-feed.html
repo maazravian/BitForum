@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Profile_feed</title>
+<title>{{user.name}}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="" />
 <meta name="keywords" content="" />
@@ -148,6 +148,7 @@
 												<div class="container">
 													<h4><a href="#" title="" data-toggle="modal" data-target="#myModal">Following</a></h4>
 
+<!--													Following modal-->
 													<div class="modal fade" id="myModal" role="dialog">
 															<div class="modal-dialog">
 															   <div class="modal-content">
@@ -222,8 +223,48 @@
 												<div class="container">
 													<h4><a href="#"  data-toggle="modal" data-target="#myModal2">Followers</a></h4>
 
+<!--													Followers modal-->
+													 <div class="modal fade" id="myModal2" role="dialog">
+                                                      <div class="modal-dialog">
+                                                      	<div class="modal-content">
+                                                      		<div class="modal-header">
+                                                      			<h4 class="modal-title"  >Followers</h4>
+                                                      			<button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                                                      			  </div>
+                                                      			  <div class="modal-body">
+                                                      			   <p></p>
+
+
+
+
+
+																	  <div class="suggestions-list">
+																		{%  for follower in myfollowers  %}
+																		<div class="suggestion-usd">
+																			<img src="{{ follower.followerId.profile_pic }}" height="35" width="35" alt="">
+																			<div class="sgt-text">
+																				<p>{{ follower.followerId.name }}</p>
+
+																			</div>
+																			<span><a href="{% url 'removeFollower' follower.pk %}" style=" outline:none; color:white;" class="btn btn-danger btn-sm">Remove</a></span>
+																		</div>
+
+																		{% endfor %}
+
+																	</div><!--suggestions-list end-->
+
+                                                      			</div>
+                                                      			<div class="modal-footer">
+                                                      				<button type="button" class="btn btn-default" style="cursor:pointer" data-dismiss="modal">Close</button>
+                                                      			</div>
+                                                      		</div>
+                                                      	</div>
+													 </div>
 
 												</div>
+
+
 												<span>{{ followers_count }}</span>
 											</li>
 											</ul>
@@ -238,58 +279,58 @@
 									<div class="user-tab-sec">
 										<h3>{{ user.name }}</h3>
 										<div class="star-descp">
-											<span>Graphic Designer at Self Employed</span>
+											<span>{{user.status}}</span>
 											
 										</div><!--star-descp end-->
 										<!-- tab-feed end-->
 									</div><!--user-tab-sec end-->
 									<div class="product-feed-tab current" id="feed-dd">
 										<div class="posts-section">
-											<div class="post-bar">
-												<div class="post_topbar">
-													<div class="usy-dt">
-														<img src="http://via.placeholder.com/50x50" alt="">
-														<div class="usy-name">
-															<h3>John Doe</h3>
-															<span><img src="{% static 'images/clock.png' %}" alt="">3 min ago</span>
-														</div>
-													</div>
-													<div class="ed-opts">
-														<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
-														<ul class="ed-options">
-															<li><a href="#" title="">Edit Post</a></li>
-															<li><a href="#" title="">Delete</a></li>
-															
-														</ul>
-													</div>
-												</div>
-												
-												<div class="job_descp">
-													<a href="#"><h3>This is a demo Post title</h3></a>
-													
-													<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
 
-													<!-- topics -->
-													<ul class="skill-tags">
-														<li><a href="#" title="">HTML</a></li>
-														<li><a href="#" title="">PHP</a></li>
-														<li><a href="#" title="">CSS</a></li>
-														<li><a href="#" title="">Javascript</a></li>
-														<li><a href="#" title="">Wordpress</a></li> 	
-													</ul>
+
+											{% for post in newsFeedPosts %}
+										<div class="post-bar">
+
+											<div class="post_topbar">
+												<div class="usy-dt">
+													<img src="{{post.post.user_id.profile_pic}}" height="40" width="40" alt="">
+													<div class="usy-name">
+														<h3>{{post.post.user_id.name}}</h3>
+														<span><img src="{% static 'images/clock.png' %}" alt="">{{post.post.date_time}}</span>
+													</div>
 												</div>
-												<div class="job-status-bar">
-													<ul class="like-com">
-														<li>
-															<a href="#"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i> Upvote</a>
-															<a href="#"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i> Downvote</a>
-															<a href="#"><i class="fa fa-comment" aria-hidden="true"></i> Comments</a>
-														</li> 
-														
-													</ul>
-													<a><i class="la la-eye"></i>Views 50</a>
-												</div>
-											</div><!--post-bar end-->
+											</div>
+											<div class="job_descp">
+												<a href="/post/{{post.post.id}}" ><h3 style="text-decoration: underline">{{post.post.title}}</h3></a>
+
+
+
+												<ul class="skill-tags">
+													{% for topic in post.topicsList %}
+													<li><a href="#" title="">{{ topic.topic_name }}</a></li>
+													{% endfor %}
+												</ul>
+
+
+												<p>{{ post.post.content | slice:"0:200" | add:"...." }} <a href="/post/{{post.post.id}}" title="">view more</a></p>
+
+											</div>
+											<div class="job-status-bar">
+												<ul class="like-com">
+													<li>
+														<a href="/doupvote"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i>{{post.upvote}} </a>
+														<a href="/dodownvote"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i>{{post.downvote}} </a>
+														<a href="/post/{{post.post.id}}"><i class="fa fa-comment" aria-hidden="true"></i>{{post.comments}} Comments</a>
+													</li>
+												</ul>
+												<a><i class="la la-eye"></i>{{post.post.no_of_views}}</a>
+											</div>
+										</div><!--post-bar end-->
+
+										{% endfor %}
+
+
+
 											<!--post-bar end-->
 											<div class="process-comm">
 												<div class="spinner">
@@ -313,23 +354,27 @@
 											
 										</div><!--sd-title end-->
 										<div class="suggestions-list">
+
+
+											{% for i in people %}
 											<div class="suggestion-usd">
-												<img src="http://via.placeholder.com/35x35" alt="">
+												<img src="{{ i.profile_pic }}" height="35" width="35" alt="">
 												<div class="sgt-text">
-													<h4>Jessica William</h4>
-													<span>Graphic Designer</span>
+													<h4>{{ i.name }}</h4>
+
+
+
+														<span>{{ i.status | slice:"0:15" | add:"...." }}</span>
+
+
+
+
 												</div>
 												<span><i class="la la-plus"></i></span>
 											</div>
-											<div class="suggestion-usd">
-												<img src="http://via.placeholder.com/35x35" alt="">
-												<div class="sgt-text">
-													<h4>John Doe</h4>
-													<span>PHP Developer</span>
-												</div>
-												<span><i class="la la-plus"></i></span>
-											</div>
-											
+											{% endfor %}
+
+
 											<div class="view-more">
 												<a href="#" title="">View More</a>
 											</div>
