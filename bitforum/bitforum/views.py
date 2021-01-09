@@ -10,10 +10,67 @@ from django.db import models
 def viewProfile(request,uid):
     return render(request,'user-profile.html')
 
-def profileTest(request):
-    user = User.objects.all()
-    dict = {'name':user[0].name,'profile_pic':user[0].profile_pic}
-    return render(request,'my-profile-feed.html', {'user':dict})
+def myProfile(request):
+    user = User.objects.get(email=request.session['email'])
+    allUser = User.objects.all()
+    following_count = FollowersFollowings.objects.filter(followerId=user.id)
+    followers_count = FollowersFollowings.objects.filter(followingId=user.id)
+    followed_topics = TopicFollower.objects.filter(followerId=user.id)
+
+    people_you_may_know = []
+    alltopics = Topic.objects.all()
+    topics = []
+    for t in alltopics:
+        found = False
+        for temp in followed_topics:
+            if temp.topicId.topic_name == t.topic_name:
+                found = True
+                break
+        if found:
+            continue
+        else:
+            topics.append(t)
+    for u in allUser:
+        found = False
+        if u.email == user.email:
+            continue
+        for temp in following_count:
+            if temp.followingId.email == u.email:
+                found = True
+                break
+        if found:
+            continue
+        else:
+            people_you_may_know.append(u)
+
+    myPosts = Post.objects.filter(user_id=user)
+
+    postsToShow = []
+    for i in myPosts:
+        onePost = {}
+        onePost['post'] = i
+        onePost['upvote'] = len(Upvote.objects.filter(postId=i))
+        onePost['downvote'] = len(Downvote.objects.filter(postId=i))
+        onePost['comments'] = len(Comment.objects.filter(postId=i))
+        topicListOfThatPost = []
+        contains = Contains.objects.filter(postId=i)
+        for j in contains:
+            topicListOfThatPost.append(Topic.objects.get(id=j.topicId.id))
+        onePost['topicsList'] = topicListOfThatPost
+        postsToShow.append(onePost)
+
+    topics_with_follower_count = []
+
+    for topic in topics:
+        topics_with_follower_count.append(
+            {'t': topic.topic_name, 'count': str(len(TopicFollower.objects.filter(topicId=topic.id))) + " Followers"})
+
+    return render(request, 'my-profile-feed.html',
+                  {'newsFeedPosts': postsToShow, 'user': user, 'followers_count': len(followers_count),
+                   'following_count': len(following_count) + len(followed_topics), 'people': people_you_may_know,
+                   'suggested_topics': topics_with_follower_count, 'myfollowers': followers_count,
+                   'myfollowing': following_count
+                      , 'mytopics': followed_topics})
 
 def login_signup_page(request):
     return render(request,'sign-in.html')
@@ -47,7 +104,6 @@ def home(request):
 
         followed_topics = TopicFollower.objects.filter(followerId=user.id)
 
-        print(followed_topics)
         allUser = User.objects.all()
 
         people_you_may_know = []
@@ -87,16 +143,81 @@ def home(request):
         # print(people_you_may_know)
 
 
+        # postsToShow = []
+        # print("###")
+        # oneUserPosts = Post.objects.filter(user_id=user)
+        # for i in following_count:
+        #     oneUserPosts = oneUserPosts | (Post.objects.filter(user_id = i.followingId))
+        #
+        # postsToShow.append(oneUserPosts)
+        # print(postsToShow)
+        # postsToShow = postsToShow[0]
+
         postsToShow = []
-        print("###")
-        oneUserPosts = Post.objects.filter(user_id=user)
-        for i in following_count:
-            oneUserPosts = oneUserPosts | (Post.objects.filter(user_id = i.followingId))
 
-        postsToShow.append(oneUserPosts)
-        print(postsToShow)
-        postsToShow = postsToShow[0]
+        for following in following_count:
+            oneUserPosts = Post.objects.filter(user_id = following.followingId)
 
+            for i in oneUserPosts:
+                onePost = {}
+                onePost['post'] = i
+                onePost['upvote'] = len(Upvote.objects.filter(postId=i))
+                onePost['downvote'] = len(Downvote.objects.filter(postId=i))
+                onePost['comments'] = len(Comment.objects.filter(postId=i))
+                topicListOfThatPost = []
+                contains   = Contains.objects.filter(postId=i)
+                for j in contains:
+                    topicListOfThatPost.append(Topic.objects.get(id=j.topicId.id))
+                onePost['topicsList'] = topicListOfThatPost
+                postsToShow.append(onePost)
+
+        myPosts = Post.objects.filter(user_id=user)
+        for i in myPosts:
+            onePost = {}
+            onePost['post'] = i
+            onePost['upvote'] = len(Upvote.objects.filter(postId=i))
+            onePost['downvote'] = len(Downvote.objects.filter(postId=i))
+            onePost['comments'] = len(Comment.objects.filter(postId=i))
+            topicListOfThatPost = []
+            contains = Contains.objects.filter(postId=i)
+            for j in contains:
+                topicListOfThatPost.append(Topic.objects.get(id=j.topicId.id))
+            onePost['topicsList'] = topicListOfThatPost
+            postsToShow.append(onePost)
+
+        followedTopicList = []
+        for topic in followed_topics:
+            followedTopicList.append(Topic.objects.get(id=topic.topicId.id))
+
+
+            # for i in oneTopicPosts:
+            #     onePost = {}
+            #     onePost['post'] = i
+            #     onePost['upvote'] = len(Upvote.objects.filter(postId=i))
+            #     onePost['downvote'] = len(Downvote.objects.filter(postId=i))
+            #     onePost['comments'] = len(Comment.objects.filter(postId=i))
+            #
+            #     postsToShow.append(onePost)
+
+
+        for p in Post.objects.raw("select id from posts_Post where id = (select postId_id from posts_contains where topicId_id = (select topicId_id from posts_topicfollower where followerId_id = %s)) ",[user.id]):
+            onePost = {}
+            onePost['post'] = p
+            onePost['upvote'] = len(Upvote.objects.filter(postId=p))
+            onePost['downvote'] = len(Downvote.objects.filter(postId=p))
+            onePost['comments'] = len(Comment.objects.filter(postId=p))
+            topicListOfThatPost = []
+            contains = Contains.objects.filter(postId=i)
+            for j in contains:
+                topicListOfThatPost.append(Topic.objects.get(id=j.topicId.id))
+            onePost['topicsList'] = topicListOfThatPost
+            postsToShow.append(onePost)
+
+        newList = {x['post']: x for x in postsToShow}.values()
+        postsToShow = newList
+
+
+        #postsToShow = postsToShow[0:10]
 
         topics = topics[0:4]
         topics_with_follower_count = []

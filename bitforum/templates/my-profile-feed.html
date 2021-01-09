@@ -31,7 +31,7 @@
 			<div class="container">
 				<div class="header-data">
 					<div class="logo">
-						<a href="#" title=""><img src="{% static 'images/logo.png' %}" height="50" width="50" alt=""></a>
+						<a href="../" title=""><img src="{% static 'images/logo.png' %}" height="50" width="50" alt=""></a>
 					</div><!--logo end-->
 					<div class="search-bar">
 						<form>
@@ -42,7 +42,7 @@
 					<nav>
 						<ul>
 							<li>
-								<a href="#" title="">
+								<a href="../" title="">
 									<span><img src="{% static 'images/icon1.png' %}"  alt=""></span>
 									Home
 								</a>
@@ -104,18 +104,18 @@
 						<a href="#" title=""><i class="fa fa-bars"></i></a>
 					</div><!--menu-btn end-->
 					<div class="user-account">
-						<div class="user-info">
-							<img src="http://via.placeholder.com/30x30" alt="">
-							<a href="#" title="">John</a>
+						<div class="user-info" >
+							<img src=" {{ user.profile_pic }} " height="30" width="30" alt="" style="margin-left:40px">
+
+
 							<i class="la la-sort-down"></i>
 						</div>
 						<div class="user-account-settingss">
-						
 							<h3>Profile</h3>
 							<ul class="us-links">
-								<li><a href="#" title="">View Profile</a></li>
+								<li><a href="/myProfile" title="">{{user.name}}</a></li>
 							</ul>
-							<h3 class="tc"><a href="#" title="">Logout</a></h3>
+							<h3 class="tc"><a href="/logout" title="">Logout</a></h3>
 						</div><!--user-account-settingss end-->
 					</div>
 				</div><!--header-data end-->
@@ -139,7 +139,7 @@
 									<div class="user_profile ">
 										<div class="user-pro-img">
 											<img src="{{user.profile_pic}}" alt="" width="170" height="170">
-											<a href="#" title=""><i class="fa fa-camera"></i></a>
+											<a href="#" title=""><i class="fa fa-pencil"></i></a>
 										</div><!--user-pro-img end-->
 										<div class="user_pro_status">
 											
@@ -147,13 +147,14 @@
 												<li>
 												<div class="container">
 													<h4><a href="#" title="" data-toggle="modal" data-target="#myModal">Following</a></h4>
-														<div class="modal fade" id="myModal" role="dialog">
+
+													<div class="modal fade" id="myModal" role="dialog">
 															<div class="modal-dialog">
 															   <div class="modal-content">
 															 	  <div class="modal-header">
 															 	  	<h4 class="modal-title">Following</h4>
 															 	    <button type="button" class="close" data-dismiss="modal">&times;</button>
-															 	      
+
 															 	  </div>
 															 	<div class="modal-body">
 																	<button class="btn btn-primary btn-sm" id="btn-people" style="cursor:pointer" disabled>People</button>
@@ -175,7 +176,7 @@
 																						<p>{{ following.followingId.name }}</p>
 
 																					</div>
-																					<span><button class="btn btn-danger btn-sm" style="cursor:pointer"> Unfollow</button></span>
+																					<span><a href="{% url 'deleteFollowing' following.pk %}" style=" outline:none; color:white;" class="btn btn-danger btn-sm">Unfollow</a></span>
 																				</div>
 
 																				{% endfor %}
@@ -192,11 +193,12 @@
 																			<div class="suggestions-list">
 																				{% for topic in mytopics %}
 																				<div class="suggestion-usd">
+																					<i class="fa fa-hashtag"style="float:left;"></i>
 																					<div class="sgt-text">
-																						<h2>{{ topic.topicId.topic_name }}</h2>
 
+																						<h2>{{ topic.topicId.topic_name }}</h2>
 																					</div>
-																					<span><button class="btn btn-danger btn-sm" style="cursor:pointer"> Unfollow</button></span>
+																					<span><a href="{% url 'unfollowTopic' topic.pk %}" style=" outline:none; color:white;" class="btn btn-danger btn-sm">Unfollow</a></span>
 																				</div>
 
 																				{% endfor %}
@@ -211,53 +213,17 @@
 															 	   </div>
 															 </div>
 															</div>
-														</div>
-														
-													
+													</div>
+
 												</div>
 												<span>{{ following_count }}</span>
 											</li>
 											<li>
 												<div class="container">
 													<h4><a href="#"  data-toggle="modal" data-target="#myModal2">Followers</a></h4>
-                                                     <div class="modal fade" id="myModal2" role="dialog">
-                                                      <div class="modal-dialog">
-                                                      	<div class="modal-content">
-                                                      		<div class="modal-header">
-                                                      			<h4 class="modal-title"  >Followers</h4>
-                                                      			<button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                      			 
-                                                      			  </div>
-                                                      			  <div class="modal-body">
-                                                      			   <p></p>
 
 
-
-
-
-																	  <div class="suggestions-list">
-																		{%  for follower in myfollowers  %}
-																		<div class="suggestion-usd">
-																			<img src="{{ follower.followerId.profile_pic }}" height="35" width="35" alt="">
-																			<div class="sgt-text">
-																				<p>{{ follower.followerId.name }}</p>
-
-																			</div>
-																			<span><button class="btn btn-danger btn-sm" style="cursor:pointer"> Remove</button></span>
-																		</div>
-
-																		{% endfor %}
-
-																	</div><!--suggestions-list end-->
-
-                                                      			</div>
-                                                      			<div class="modal-footer">
-                                                      				<button type="button" class="btn btn-default" style="cursor:pointer" data-dismiss="modal">Close</button>
-                                                      			</div>
-                                                      		</div>
-                                                      	</div>
-                                                      </div>
-                                                  </div>
+												</div>
 												<span>{{ followers_count }}</span>
 											</li>
 											</ul>
@@ -398,7 +364,35 @@
 
 	</div><!--theme-layout end-->
 
+<script type="text/javascript">
 
+	people = document.getElementById('btn-people');
+	topics = document.getElementById('btn-topic');
+	people_data = document.getElementById('people-data');
+	topic_data = document.getElementById('topic-data');
+
+	people.onclick = function(){
+		console.log('clicked')
+		people.disabled = true;
+		topics.disabled = false;
+
+		topic_data.style.display = "none";
+		people_data.style.display = "block";
+	}
+	topics.onclick = function(){
+		people.disabled = false;
+		topics.disabled = true;
+		topic_data.style.display = "block";
+		people_data.style.display = "none";
+	}
+
+	function deleteFollowing(id){
+		console.log(id)
+		window.location.href = "/deleteFollowing?id="+id;
+	}
+
+
+	</script>
 
 <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/popper.js' %}"></script>

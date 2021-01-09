@@ -107,7 +107,7 @@
 						<div class="user-account-settingss">
 							<h3>Profile</h3>
 							<ul class="us-links">
-								<li><a href="/profile" title="">{{user.name}}</a></li>
+								<li><a href="/myProfile" title="">{{user.name}}</a></li>
 							</ul>
 							<h3 class="tc"><a href="/logout" title="">Logout</a></h3>
 						</div><!--user-account-settingss end-->
@@ -183,9 +183,10 @@
 																			<div class="suggestions-list">
 																				{% for topic in mytopics %}
 																				<div class="suggestion-usd">
+																					<i class="fa fa-hashtag"style="float:left;"></i>
 																					<div class="sgt-text">
-																						<h2>{{ topic.topicId.topic_name }}</h2>
 
+																						<h2>{{ topic.topicId.topic_name }}</h2>
 																					</div>
 																					<span><a href="{% url 'unfollowTopic' topic.pk %}" style=" outline:none; color:white;" class="btn btn-danger btn-sm">Unfollow</a></span>
 																				</div>
@@ -356,30 +357,37 @@
 
 											<div class="post_topbar">
 												<div class="usy-dt">
-													<img src="{{post.user_id.profile_pic}}" height="40" width="40" alt="">
+													<img src="{{post.post.user_id.profile_pic}}" height="40" width="40" alt="">
 													<div class="usy-name">
-														<h3>{{post.user_id.name}}</h3>
-														<span><img src="{% static 'images/clock.png' %}" alt="">{{post.date_time}}</span>
+														<h3>{{post.post.user_id.name}}</h3>
+														<span><img src="{% static 'images/clock.png' %}" alt="">{{post.post.date_time}}</span>
 													</div>
 												</div>	
 											</div>
 											<div class="job_descp">
-												<a href="/post/{{post.id}}" ><h3 style="text-decoration: underline">{{post.title}}</h3></a>
-												<p>{{ post.content | slice:"0:200" | add:"...." }} <a href="/post/{{post.id}}" title="">view more</a></p>
-												<ul class="skill-tags">
-													<li><a href="#" title="">Pending</a></li>
+												<a href="/post/{{post.post.id}}" ><h3 style="text-decoration: underline">{{post.post.title}}</h3></a>
 
+
+
+												<ul class="skill-tags">
+													{% for topic in post.topicsList %}
+													<li><a href="#" title="">{{ topic.topic_name }}</a></li>
+													{% endfor %}
 												</ul>
+
+
+												<p>{{ post.post.content | slice:"0:200" | add:"...." }} <a href="/post/{{post.post.id}}" title="">view more</a></p>
+
 											</div>
 											<div class="job-status-bar">
 												<ul class="like-com"> 
 													<li>
-														<a href="#"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i> Upvote</a>
-														<a href="#"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i> Downvote</a>
-														<a href="#"><i class="fa fa-comment" aria-hidden="true"></i> Comments</a>
+														<a href="/doupvote"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i>{{post.upvote}} </a>
+														<a href="/dodownvote"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i>{{post.downvote}} </a>
+														<a href="/post/{{post.post.id}}"><i class="fa fa-comment" aria-hidden="true"></i>{{post.comments}} Comments</a>
 													</li>
 												</ul>
-												<a><i class="la la-eye"></i>Views 50</a>
+												<a><i class="la la-eye"></i>{{post.post.no_of_views}}</a>
 											</div>
 										</div><!--post-bar end-->
 
