@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>WorkWise Html Template</title>
+<title>{{ userprofile.name  }}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="" />
 <meta name="keywords" content="" />
@@ -23,14 +23,11 @@
 	
 
 	<div class="wrapper">
-		
-
-
 		<header>
 			<div class="container">
 				<div class="header-data">
 					<div class="logo">
-						<a href="#" title=""><img src="{% static 'images/logo.png' %}" width="50" height="50" alt=""></a>
+						<a href="../" title=""><img src="{% static 'images/logo.png' %}" width="50" height="50" alt=""></a>
 					</div><!--logo end-->
 					<div class="search-bar">
 						<form>
@@ -41,20 +38,10 @@
 					<nav>
 						<ul>
 							<li>
-								<a href="#" title="">
+								<a href="../" title="">
 									<span><img src="{% static 'images/icon1.png' %}" alt=""></span>
 									Home
 								</a>
-							</li>
-							<li>
-								<a href="#" title="">
-									<span><img src="{% static 'images/icon4.png'%}" alt=""></span>
-									Profiles
-								</a>
-								<ul>
-									<li><a href="#" title="">User Profile</a></li>
-									<li><a href="#" title="">my-profile-feed</a></li>
-								</ul>
 							</li>
 							<li>
 								<a href="#" title="" class="not-box-open">
@@ -111,17 +98,18 @@
 						<a href="#" title=""><i class="fa fa-bars"></i></a>
 					</div><!--menu-btn end-->
 					<div class="user-account">
-						<div class="user-info">
-							<img src="http://via.placeholder.com/30x30" alt="">
-							<a href="#" title="">John</a>
+						<div class="user-info" >
+							<img src=" ../{{ user.profile_pic }} " height="30" width="30" alt="" style="margin-left:40px">
+
+
 							<i class="la la-sort-down"></i>
 						</div>
 						<div class="user-account-settingss">
-							<h3>User profile</h3>
+							<h3>User Profile</h3>
 							<ul class="us-links">
-								<li><a href="#" title="">View profile</a></li>
+								<li><a href="/myProfile" title="">{{user.name}}</a></li>
 							</ul>
-							<h3 class="tc"><a href="#" title="">Logout</a></h3>
+							<h3 class="tc"><a href="/logout" title="">Logout</a></h3>
 						</div><!--user-account-settingss end-->
 					</div>
 				</div><!--header-data end-->
@@ -143,56 +131,45 @@
 								<div class="main-left-sidebar">
 									<div class="user_profile">
 										<div class="user-pro-img">
-											<img src="http://via.placeholder.com/170x170" alt="">
+											<img src="../{{ userprofile.profile_pic }}" height="170" width="170" alt="">
 										</div><!--user-pro-img end-->
 										<div class="user_pro_status">
 											<ul class="flw-status">
 												<li>
 													<span>Following</span>
-													<b>34</b>
+													<b>{{ followers_count }}</b>
 												</li>
 												<li>
 													<span>Followers</span>
-													<b>155</b>
+													<b>{{ following_count }}</b>
 												</li>
 											</ul>
+                                            <button class="follow-btn" id="follow-btn" value="follow" style="font-size: 16px; background:#3c8dbc;border:0;padding:12px 27px;margin-top:20px;color:white;cursor: pointer;  ">Follow</button>
 										</div><!--user_pro_status end-->
 									</div><!--user_profile end-->
-									<div class="suggestions full-width">
-										<div class="sd-title">
-											<h3>People you may know</h3>
-											<i class="la la-ellipsis-v"></i>
-										</div><!--sd-title end-->
-										<div class="suggestions-list">
-											<div class="suggestion-usd">
-												<img src="http://via.placeholder.com/35x35" alt="">
-												<div class="sgt-text">
-													<h4>Jessica William</h4>
-													<span>Graphic Designer</span>
-												</div>
-												<span><i class="la la-plus"></i></span>
-											</div>
-											<div class="view-more">
-												<a href="#" title="">View More</a>
-											</div>
-										</div><!--suggestions-list end-->
-									</div><!--suggestions end-->
+
 								</div><!--main-left-sidebar end-->
 							</div>
 							<div class="col-lg-6">
 								<div class="main-ws-sec">
 									<div class="user-tab-sec">
-										<h3>John Doe</h3>
+										<h3>{{ userprofile.name }}</h3>
+                                        <div class="star-descp">
+											<span>{{userprofile.status}}</span>
+
+										</div><!--star-descp end-->
 									</div><!--user-tab-sec end-->
 									<div class="product-feed-tab current" id="feed-dd">
 										<div class="posts-section">
+                                            {% for post in userPosts %}
+
 											<div class="post-bar">
 												<div class="post_topbar">
 													<div class="usy-dt">
-														<img src="http://via.placeholder.com/50x50" alt="">
+														<img src="../{{ userprofile.profile_pic}} " width="40" height="40" alt="">
 														<div class="usy-name">
-															<h3>John Doe</h3>
-															<span><img src="{% static 'images/clock.png' %}" alt="">3 min ago</span>
+															<h3>{{ userprofile.name }}</h3>
+															<span><img src="{% static 'images/clock.png' %}" alt="">{{post.post.date_time}}</span>
 														</div>
 													</div>
 													<div class="ed-opts">
@@ -204,27 +181,28 @@
 													</div>
 												</div>
 												<div class="job_descp">
-													<h3>Senior Wordpress Developer</h3>
-													<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
+													<h3>{{post.post.title}}</h3>
+
 													<ul class="skill-tags">
-														<li><a href="#" title="">HTML</a></li>
-														<li><a href="#" title="">PHP</a></li>
-														<li><a href="#" title="">CSS</a></li>
-														<li><a href="#" title="">Javascript</a></li>
-														<li><a href="#" title="">Wordpress</a></li> 	
+														{% for topic in post.topicsList %}
+													<li><a href="#" title="">{{ topic.topic_name }}</a></li>
+													{% endfor %}
 													</ul>
+                                                <p>{{post.post.content | slice:"0:200" | add:"...." }} <a href="#" title="">view more</a></p>
 												</div>
 												<div class="job-status-bar">
 													<ul class="like-com">
 														<li>
-															<a href="#"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i> Upvote</a>
-															<a href="#"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i> Downv</a>
-															<a href="#"><i class="fa fa-comment" aria-hidden="true"></i> Comments</a>
+                                                            <a href="/doupvote"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i>{{post.upvote}} </a>
+														<a href="/dodownvote"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i>{{post.downvote}} </a>
+														<a href="/post/{{post.post.id}}"><i class="fa fa-comment" aria-hidden="true"></i>{{post.comments}} Comments</a>
 														</li>
 													</ul>
-													<a><i class="la la-eye"></i>Views 50</a>
+													<a><i class="la la-eye"></i>{{post.post.no_of_views}}</a>
 												</div>
 											</div><!--post-bar end-->
+                                            {% endfor %}
+
 											<div class="process-comm">
 												<div class="spinner">
 													<div class="bounce1"></div>
@@ -241,29 +219,27 @@
 								<div class="right-sidebar">
 									<div class="suggestions full-width">
 										<div class="sd-title">
-											<h3>Suggested Topics</h3>
-											
+											<h3>People you may know</h3>
+											<i class="la la-ellipsis-v"></i>
 										</div><!--sd-title end-->
 										<div class="suggestions-list">
+											{% for i in people %}
 											<div class="suggestion-usd">
-												
+												<img src="../{{ i.profile_pic }}" height="35" width="35" alt="">
 												<div class="sgt-text">
-													<h4>Bootstrap</h4>
-													
-												</div>
-												<span><i class="la la-plus"></i></span>
-											</div>
+													<h4>{{ i.name }}</h4>
 
-											<div class="suggestion-usd">
-												
-												<div class="sgt-text">
-													<h4>Django-python</h4>
-									
+
+
+														<span>{{ i.status | slice:"0:15" | add:"...." }}</span>
+
+
+
+
 												</div>
 												<span><i class="la la-plus"></i></span>
 											</div>
-											
-											
+											{% endfor %}
 											<div class="view-more">
 												<a href="#" title="">View More</a>
 											</div>

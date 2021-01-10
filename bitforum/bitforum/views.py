@@ -8,7 +8,49 @@ from django.db import models
 
 
 def viewProfile(request,uid):
-    return render(request,'user-profile.html')
+    user = User.objects.get(email=request.session['email'])
+    following_count = FollowersFollowings.objects.filter(followerId=user.id)
+    followers_count = FollowersFollowings.objects.filter(followingId=user.id)
+    followed_topics = TopicFollower.objects.filter(followerId=user.id)
+    userprofile=User.objects.get(id=uid)
+    myPosts = Post.objects.filter(user_id=userprofile)
+
+    postsToShow = []
+    for i in myPosts:
+        onePost = {}
+        onePost['post'] = i
+        onePost['upvote'] = len(Upvote.objects.filter(postId=i))
+        onePost['downvote'] = len(Downvote.objects.filter(postId=i))
+        onePost['comments'] = len(Comment.objects.filter(postId=i))
+        topicListOfThatPost = []
+        contains = Contains.objects.filter(postId=i)
+        for j in contains:
+            topicListOfThatPost.append(Topic.objects.get(id=j.topicId.id))
+        onePost['topicsList'] = topicListOfThatPost
+        postsToShow.append(onePost)
+
+
+
+    people_you_may_know = []
+    allUser = User.objects.all()
+    for u in allUser:
+        found = False
+        if u.email == user.email:
+            continue
+        for temp in following_count:
+            if temp.followingId.email == u.email:
+                found = True
+                break
+        if found:
+            continue
+        else:
+            people_you_may_know.append(u)
+
+
+    people_you_may_know = people_you_may_know[0:4]
+
+    return render(request,'user-profile.html',{'user': user,'followers_count': len(followers_count),
+                   'following_count': len(following_count) + len(followed_topics),'userprofile':userprofile,'userPosts': postsToShow,'people':people_you_may_know})
 
 def myProfile(request):
     user = User.objects.get(email=request.session['email'])
