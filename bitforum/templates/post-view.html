@@ -195,10 +195,10 @@
 													<li>
 														<div class="comment-list">
 															<div class="bg-img">
-																<img src="../{{ comment.userId.profile_pic }}" width="40" height="40" alt="">
+																<a href="/viewProfile/{{ comment.userId.id }}"><img src="../{{ comment.userId.profile_pic }}" width="40" height="40" alt=""></a>
 															</div>
 															<div class="comment">
-																<h3>{{ comment.userId.name }}</h3>
+																<a href="/viewProfile/{{ comment.userId.id }}"><h3>{{ comment.userId.name }}</h3></a>
 																<span><img src="{% static 'images/clock.png' %}" alt=""> {{ comment.date_time }} </span>
 																<p> {{ comment.content }} </p>
 																<ul class="like-com" >
