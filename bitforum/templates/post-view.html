@@ -136,9 +136,9 @@
 											<div class="post-bar" >
 												<div class="post_topbar" >
 													<div class="usy-dt">
-														<img src=" ../{{post.user_id.profile_pic}}" height="40" width="40" alt="">
+														<a href="{% url 'viewProfile' post.user_id.id %}"><img src=" ../{{post.user_id.profile_pic}}" height="40" width="40" alt=""></a>
 														<div class="usy-name">
-															<h3>{{post.user_id.name}}</h3>
+															<a href="{% url 'viewProfile' post.user_id.id %}"><h3>{{post.user_id.name}}</h3></a>
 															<span><img src="{% static 'images/clock.png' %}" alt="">{{post.date_time}}</span>
 														</div>
 													</div>
@@ -147,10 +147,10 @@
 												
 												<div class="job_descp">
 
-													<a href="#"><h3>{{post.title}}</h3></a>
+													<h3>{{post.title}}</h3>
 													<ul class="skill-tags">
 														{% for topic in topics %}
-														<li><a href="#" title="">{{topic.topicId.topic_name}}</a></li>
+														<li class="topic-name-hover"><a href="#" title="">{{topic.topicId.topic_name}}</a></li>
 
 														{% endfor %}
 													</ul>
@@ -162,9 +162,21 @@
 													<ul class="like-com">
 														<li>
 
-															<a href="#"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i> {{upCount}}</a>
-															<a href="#"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i>
-																{{downCount}}</a>
+															<a onclick="upvoteAjax(this.name)" name="{{post.id}}"  style="cursor:pointer;">
+																{% if checkUp %}
+																	<i class="fa fa-arrow-circle-up" id="upvote-icon" style="color: #3c8dbc" aria-hidden="true"></i>
+																{% else %}
+																	<i class="fa fa-arrow-circle-up" id="upvote-icon" aria-hidden="true"></i>
+																{% endif %}
+																<div style="float: right" id="upvote-count"> {{upCount}}  </div></a>
+															<a style="cursor: pointer" onclick="downvoteAjax(this.name)" name="{{post.id}}" >
+																{% if checkDown %}
+																	<i class="fa fa-arrow-circle-down" id="downvote-icon" style="color: red" aria-hidden="true"></i>
+																{% else %}
+																	<i class="fa fa-arrow-circle-down" id="downvote-icon"  aria-hidden="true"></i>
+																{% endif %}
+
+																<div style="float: right" id="downvote-count"> {{downCount}}  </div></a>
 															<a href="#"><i class="fa fa-comment" aria-hidden="true"></i>{{commentCount}}  Comments</a>
 														</li> 
 														
@@ -346,6 +358,87 @@
 		function noOfComments(){
 			window.scrollTo(0, document.body.scrollHeight);
 		}
+
+		function upvoteAjax(id){
+
+
+		console.log(id);
+
+		  $.ajax({
+				   type: "POST",
+				   url: "{% url 'doUpvote' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+							  // remove upvote
+							  icon = document.getElementById('upvote-icon');
+							  	icon.style.color = 'grey';
+							  	count = document.getElementById('upvote-count');
+							  	console.log(count.innerHTML)
+								x = parseInt(count.innerHTML) -1
+							  count.innerHTML = x;
+						  }
+					      else if (response.message == 0)
+						  {
+								// add upvote
+							  	icon = document.getElementById('upvote-icon');
+							  	icon.style.color = '#3c8dbc';
+							  	count = document.getElementById('upvote-count');
+							  	console.log(count.innerHTML)
+								x = parseInt(count.innerHTML) +1
+							  count.innerHTML = x;
+						  }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+		}
+
+		function downvoteAjax(id){
+
+
+		console.log(id);
+
+		  $.ajax({
+				   type: "POST",
+				   url: "{% url 'doDownvote' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+							  // remove downvote
+							  icon = document.getElementById('downvote-icon');
+							  	icon.style.color = 'grey';
+							  	count = document.getElementById('downvote-count');
+							  	console.log(count.innerHTML)
+								x = parseInt(count.innerHTML) -1
+							  count.innerHTML = x;
+						  }
+					      else if (response.message == 0)
+						  {
+								// add upvote
+							  	icon = document.getElementById('downvote-icon');
+							  	icon.style.color = 'red';
+							  	count = document.getElementById('downvote-count');
+							  	console.log(count.innerHTML)
+								x = parseInt(count.innerHTML) +1
+							  count.innerHTML = x;
+						  }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+		}
+
 	</script>
 
 

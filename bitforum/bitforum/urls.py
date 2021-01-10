@@ -35,6 +35,8 @@ urlpatterns = [
     path('post/<int:pid>', viewPost, name='viewPost'),
     path('signup', signup),
     path('viewProfile/<int:uid>',viewProfile,name='viewProfile'),
+    path('doUpvote',doUpvote,name='doUpvote'),
+    path('doDownvote',doDownvote,name='doDownvote'),
     #path('checkLoginAjax',checkLoginAjax,name='checkLoginAjax')
 ]
 
