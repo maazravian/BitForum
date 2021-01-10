@@ -171,13 +171,14 @@
 
 																				<div class="suggestions-list">
 																				{% for following in myfollowing %}
-																				<div class="suggestion-usd">
+																				<div class="suggestion-usd" id="following-div-{{following.id}}">
 																					<img src="{{ following.followingId.profile_pic }}" height="35" width="35" alt="">
 																					<div class="sgt-text">
 																						<p>{{ following.followingId.name }}</p>
 
 																					</div>
-																					<span><a href="{% url 'deleteFollowing' following.pk %}" style=" outline:none; color:white;" class="btn btn-danger btn-sm">Unfollow</a></span>
+
+																					<span><a  id="{{following.id}}" onclick="unfollowAjax(this.id)" style=" outline:none; color:white; cursor: pointer" class="btn btn-danger btn-sm">Unfollow</a></span>
 																				</div>
 
 																				{% endfor %}
@@ -193,13 +194,14 @@
 
 																			<div class="suggestions-list">
 																				{% for topic in mytopics %}
-																				<div class="suggestion-usd">
+																				<div class="suggestion-usd" id="following-topic-div-{{topic.id}}">
 																					<i class="fa fa-hashtag"style="float:left;"></i>
 																					<div class="sgt-text">
 
 																						<h2>{{ topic.topicId.topic_name }}</h2>
 																					</div>
-																					<span><a href="{% url 'unfollowTopic' topic.pk %}" style=" outline:none; color:white;" class="btn btn-danger btn-sm">Unfollow</a></span>
+																					<span><a  style=" outline:none; color:white; cursor:pointer;" id="{{topic.id}}" onclick="unfollowTopicAjax(this.id)" class="btn btn-danger btn-sm">Unfollow</a>
+																					</span>
 																				</div>
 
 																				{% endfor %}
@@ -214,7 +216,7 @@
 															 	   </div>
 															 </div>
 															</div>
-													</div>
+														</div>
 
 												</div>
 												<span>{{ following_count }}</span>
@@ -224,7 +226,7 @@
 													<h4><a href="#"  data-toggle="modal" data-target="#myModal2">Followers</a></h4>
 
 <!--													Followers modal-->
-													 <div class="modal fade" id="myModal2" role="dialog">
+													  <div class="modal fade" id="myModal2" role="dialog">
                                                       <div class="modal-dialog">
                                                       	<div class="modal-content">
                                                       		<div class="modal-header">
@@ -241,13 +243,13 @@
 
 																	  <div class="suggestions-list">
 																		{%  for follower in myfollowers  %}
-																		<div class="suggestion-usd">
+																		<div class="suggestion-usd" id="follower-div-{{follower.id}}">
 																			<img src="{{ follower.followerId.profile_pic }}" height="35" width="35" alt="">
 																			<div class="sgt-text">
 																				<p>{{ follower.followerId.name }}</p>
 
 																			</div>
-																			<span><a href="{% url 'removeFollower' follower.pk %}" style=" outline:none; color:white;" class="btn btn-danger btn-sm">Remove</a></span>
+																			<span><a id="{{follower.id}}" onclick="deleteFollowerAjax(this.id)" style=" cursor: pointer ;outline:none; color:white;" class="btn btn-danger btn-sm">Remove</a></span>
 																		</div>
 
 																		{% endfor %}
@@ -260,7 +262,7 @@
                                                       			</div>
                                                       		</div>
                                                       	</div>
-													 </div>
+                                                      </div>
 
 												</div>
 
@@ -318,8 +320,16 @@
 											<div class="job-status-bar">
 												<ul class="like-com">
 													<li>
-														<a href="/doupvote"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i>{{post.upvote}} </a>
-														<a href="/dodownvote"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i>{{post.downvote}} </a>
+														<a onclick="upvoteAjax(this.name)" name="{{post.post.id}}"  style="cursor:pointer;">
+
+															<i class="fa fa-arrow-circle-up" id="{{post.post.id}}upvote-icon" aria-hidden="true"></i>
+
+																<div style="float: right" id="{{post.post.id}}upvote-count"> {{post.upvote}}  </div></a>
+															<a style="cursor: pointer" onclick="downvoteAjax(this.name)" name="{{post.post.id}}" >
+																<i class="fa fa-arrow-circle-down" id="{{post.post.id}}downvote-icon"  aria-hidden="true"></i>
+
+
+																<div style="float: right" id="{{post.post.id}}downvote-count"> {{post.downvote}}  </div></a>
 														<a href="/post/{{post.post.id}}"><i class="fa fa-comment" aria-hidden="true"></i>{{post.comments}} Comments</a>
 													</li>
 												</ul>
@@ -435,6 +445,148 @@
 		console.log(id)
 		window.location.href = "/deleteFollowing?id="+id;
 	}
+
+
+	function unfollowAjax(id)
+	{
+		console.log(id);
+
+		  $.ajax({
+				   type: "POST",
+				   url: "{% url 'deleteFollowing' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      $("#following-div-"+id).remove();
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+	}
+
+	function unfollowTopicAjax(id)
+	{
+		console.log(id);
+
+		  $.ajax({
+				   type: "POST",
+				   url: "{% url 'unfollowTopic' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      $("#following-topic-div-"+id).remove();
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+	}
+
+	function deleteFollowerAjax(id)
+	{
+		console.log(id);
+
+		  $.ajax({
+				   type: "POST",
+				   url: "{% url 'removeFollower' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      $("#follower-div-"+id).remove();
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+	}
+
+
+	function upvoteAjax(id){
+
+
+		console.log(id);
+
+		  $.ajax({
+				   type: "POST",
+				   url: "{% url 'doUpvote' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+							  // remove upvote
+							  icon = document.getElementById(id+'upvote-icon');
+							  	icon.style.color = 'grey';
+							  	count = document.getElementById(id+'upvote-count');
+							  	console.log(count.innerHTML)
+								x = parseInt(count.innerHTML) -1
+							  count.innerHTML = x;
+						  }
+					      else if (response.message == 0)
+						  {
+								// add upvote
+							  	icon = document.getElementById(id+'upvote-icon');
+							  	icon.style.color = '#3c8dbc';
+							  	count = document.getElementById(id+'upvote-count');
+							  	console.log(count.innerHTML)
+								x = parseInt(count.innerHTML) +1
+							  count.innerHTML = x;
+						  }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+		}
+
+		function downvoteAjax(id){
+
+
+		console.log(id);
+
+		  $.ajax({
+				   type: "POST",
+				   url: "{% url 'doDownvote' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+							  // remove downvote
+							  icon = document.getElementById(id+'downvote-icon');
+							  	icon.style.color = 'grey';
+							  	count = document.getElementById(id+'downvote-count');
+							  	console.log(count.innerHTML)
+								x = parseInt(count.innerHTML) -1
+							  count.innerHTML = x;
+						  }
+					      else if (response.message == 0)
+						  {
+								// add upvote
+							  	icon = document.getElementById(id+'downvote-icon');
+							  	icon.style.color = 'red';
+							  	count = document.getElementById(id+'downvote-count');
+							  	console.log(count.innerHTML)
+								x = parseInt(count.innerHTML) +1
+							  count.innerHTML = x;
+						  }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+		}
 
 
 	</script>

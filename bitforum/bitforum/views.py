@@ -265,6 +265,7 @@ def viewPost(request,pid):
     post = Post.objects.get(id=pid)
     post.no_of_views +=1
     post.save()
+    user = User.objects.get(email=request.session['email'])
     commentsList = Comment.objects.filter(postId=pid)
 
     topicsList = Contains.objects.filter(postId=pid)
@@ -273,7 +274,22 @@ def viewPost(request,pid):
     downvotesList = Downvote.objects.filter(postId=pid)
     currentUser = User.objects.get(email=request.session['email'])
 
-    return render(request,'post-view.html',{'currentUser':currentUser,'post':post,'topics':topicsList,'upvotesList':upvotesList,'upCount':len(upvotesList),'downvotesList':downvotesList,'downCount':len(downvotesList),'commentCount':len(commentsList),'comments':commentsList})
+    checkUpvote = False
+    checkDownvote = False
+
+    try:
+        x = Upvote.objects.get(postId=pid,userId=user)
+        checkUpvote = True
+    except Upvote.DoesNotExist:
+        checkUpvote = False
+    try:
+        x = Downvote.objects.get(postId=pid,userId=user)
+        checkDownvote = True
+    except Downvote.DoesNotExist:
+         checkDownvote = False
+
+
+    return render(request,'post-view.html',{'currentUser':currentUser,'post':post,'topics':topicsList,'upvotesList':upvotesList,'upCount':len(upvotesList),'downvotesList':downvotesList,'downCount':len(downvotesList),'commentCount':len(commentsList),'comments':commentsList,'checkUp':checkUpvote,'checkDown':checkDownvote})
 
 def signup(request):
     if request.method == 'POST':
@@ -295,3 +311,37 @@ def signup(request):
             request.session['email'] = email
             return redirect(home)
 
+
+def doUpvote(request):
+    if request.method == 'POST':
+        postId = request.POST.get('slug', None)
+        user = User.objects.get(email=request.session['email'])
+        try:
+            x = Upvote.objects.get(postId=postId,userId=user.id)
+            ctx = {'message':1}
+            # delete upvote
+            x.delete()
+        except Upvote.DoesNotExist:
+        # Do Something
+            ctx = {'message':0}
+            # do upvote
+            p = Post.objects.get(id=postId)
+            Upvote(postId=p,userId=user).save()
+        return HttpResponse(json.dumps(ctx), content_type='application/json')
+
+def doDownvote(request):
+    if request.method == 'POST':
+        postId = request.POST.get('slug', None)
+        user = User.objects.get(email=request.session['email'])
+        try:
+            x = Downvote.objects.get(postId=postId,userId=user.id)
+            ctx = {'message':1}
+            # delete upvote
+            x.delete()
+        except Downvote.DoesNotExist:
+        # Do Something
+            ctx = {'message':0}
+            # do upvote
+            p = Post.objects.get(id=postId)
+            Downvote(postId=p,userId=user).save()
+        return HttpResponse(json.dumps(ctx), content_type='application/json')

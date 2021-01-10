@@ -384,8 +384,16 @@
 											<div class="job-status-bar">
 												<ul class="like-com"> 
 													<li>
-														<a href="/doupvote"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i>{{post.upvote}} </a>
-														<a href="/dodownvote"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i>{{post.downvote}} </a>
+														<a onclick="upvoteAjax(this.name)" name="{{post.post.id}}"  style="cursor:pointer;">
+
+															<i class="fa fa-arrow-circle-up" id="{{post.post.id}}upvote-icon" aria-hidden="true"></i>
+
+																<div style="float: right" id="{{post.post.id}}upvote-count"> {{post.upvote}}  </div></a>
+															<a style="cursor: pointer" onclick="downvoteAjax(this.name)" name="{{post.post.id}}" >
+																<i class="fa fa-arrow-circle-down" id="{{post.post.id}}downvote-icon"  aria-hidden="true"></i>
+
+
+																<div style="float: right" id="{{post.post.id}}downvote-count"> {{post.downvote}}  </div></a>
 														<a href="/post/{{post.post.id}}"><i class="fa fa-comment" aria-hidden="true"></i>{{post.comments}} Comments</a>
 													</li>
 												</ul>
@@ -590,6 +598,88 @@
 					}
 			  });
 	}
+
+
+
+	function upvoteAjax(id){
+
+
+		console.log(id);
+
+		  $.ajax({
+				   type: "POST",
+				   url: "{% url 'doUpvote' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+							  // remove upvote
+							  icon = document.getElementById(id+'upvote-icon');
+							  	icon.style.color = 'grey';
+							  	count = document.getElementById(id+'upvote-count');
+							  	console.log(count.innerHTML)
+								x = parseInt(count.innerHTML) -1
+							  count.innerHTML = x;
+						  }
+					      else if (response.message == 0)
+						  {
+								// add upvote
+							  	icon = document.getElementById(id+'upvote-icon');
+							  	icon.style.color = '#3c8dbc';
+							  	count = document.getElementById(id+'upvote-count');
+							  	console.log(count.innerHTML)
+								x = parseInt(count.innerHTML) +1
+							  count.innerHTML = x;
+						  }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+		}
+
+		function downvoteAjax(id){
+
+
+		console.log(id);
+
+		  $.ajax({
+				   type: "POST",
+				   url: "{% url 'doDownvote' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+							  // remove downvote
+							  icon = document.getElementById(id+'downvote-icon');
+							  	icon.style.color = 'grey';
+							  	count = document.getElementById(id+'downvote-count');
+							  	console.log(count.innerHTML)
+								x = parseInt(count.innerHTML) -1
+							  count.innerHTML = x;
+						  }
+					      else if (response.message == 0)
+						  {
+								// add upvote
+							  	icon = document.getElementById(id+'downvote-icon');
+							  	icon.style.color = 'red';
+							  	count = document.getElementById(id+'downvote-count');
+							  	console.log(count.innerHTML)
+								x = parseInt(count.innerHTML) +1
+							  count.innerHTML = x;
+						  }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+		}
 
 	</script>
 
