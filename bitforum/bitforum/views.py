@@ -9,6 +9,9 @@ from django.db import models
 
 def viewProfile(request,uid):
     user = User.objects.get(email=request.session['email'])
+    if user.id == uid:
+        return redirect(myProfile)
+
     following_count = FollowersFollowings.objects.filter(followerId=user.id)
     followers_count = FollowersFollowings.objects.filter(followingId=user.id)
     followed_topics = TopicFollower.objects.filter(followerId=user.id)
