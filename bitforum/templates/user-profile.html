@@ -166,9 +166,9 @@
 											<div class="post-bar">
 												<div class="post_topbar">
 													<div class="usy-dt">
-														<img src="../{{ userprofile.profile_pic}} " width="40" height="40" alt="">
+														<a href="/viewProfile/{{ userprofile.id }}"><img src="../{{ userprofile.profile_pic}} " width="40" height="40" alt=""></a>
 														<div class="usy-name">
-															<h3>{{ userprofile.name }}</h3>
+															<a href="/viewProfile/{{ userprofile.id }}"><h3>{{ userprofile.name }}</h3></a>
 															<span><img src="{% static 'images/clock.png' %}" alt="">{{post.post.date_time}}</span>
 														</div>
 													</div>
@@ -181,20 +181,30 @@
 													</div>
 												</div>
 												<div class="job_descp">
-													<h3>{{post.post.title}}</h3>
+													<a href="/post/{{post.post.id}}" ><h3 style="text-decoration: underline">{{post.post.title}}</h3></a>
 
 													<ul class="skill-tags">
 														{% for topic in post.topicsList %}
 													<li><a href="#" title="">{{ topic.topic_name }}</a></li>
 													{% endfor %}
 													</ul>
-                                                <p>{{post.post.content | slice:"0:200" | add:"...." }} <a href="#" title="">view more</a></p>
+                                                <p>{{post.post.content | slice:"0:200" | add:"...." }} <a href="/post/{{post.post.id}}" title="">view more</a></p>
 												</div>
 												<div class="job-status-bar">
 													<ul class="like-com">
 														<li>
-                                                            <a href="/doupvote"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i>{{post.upvote}} </a>
-														<a href="/dodownvote"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i>{{post.downvote}} </a>
+
+															<a onclick="upvoteAjax(this.name)" name="{{post.post.id}}"  style="cursor:pointer;">
+
+															<i class="fa fa-arrow-circle-up" id="{{post.post.id}}upvote-icon" aria-hidden="true"></i>
+
+																<div style="float: right" id="{{post.post.id}}upvote-count"> {{post.upvote}}  </div></a>
+															<a style="cursor: pointer" onclick="downvoteAjax(this.name)" name="{{post.post.id}}" >
+																<i class="fa fa-arrow-circle-down" id="{{post.post.id}}downvote-icon"  aria-hidden="true"></i>
+
+
+																<div style="float: right" id="{{post.post.id}}downvote-count"> {{post.downvote}}  </div></a>
+
 														<a href="/post/{{post.post.id}}"><i class="fa fa-comment" aria-hidden="true"></i>{{post.comments}} Comments</a>
 														</li>
 													</ul>
@@ -225,9 +235,9 @@
 										<div class="suggestions-list">
 											{% for i in people %}
 											<div class="suggestion-usd">
-												<img src="../{{ i.profile_pic }}" height="35" width="35" alt="">
+												<a href="/viewProfile/{{ i.id }}"><img src="../{{ i.profile_pic }}" height="35" width="35" alt=""></a>
 												<div class="sgt-text">
-													<h4>{{ i.name }}</h4>
+													<a href="/viewProfile/{{ i.id }}"><h4>{{ i.name }}</h4></a>
 
 
 
@@ -264,6 +274,93 @@
 			</div>
 		</footer><!--footer end-->
 	</div><!--theme-layout end-->
+
+	<script>
+
+		function upvoteAjax(id){
+
+
+		console.log(id);
+
+		  $.ajax({
+				   type: "POST",
+				   url: "{% url 'doUpvote' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+							  // remove upvote
+							  icon = document.getElementById(id+'upvote-icon');
+							  	icon.style.color = 'grey';
+							  	count = document.getElementById(id+'upvote-count');
+							  	console.log(count.innerHTML)
+								x = parseInt(count.innerHTML) -1
+							  count.innerHTML = x;
+						  }
+					      else if (response.message == 0)
+						  {
+								// add upvote
+							  	icon = document.getElementById(id+'upvote-icon');
+							  	icon.style.color = '#3c8dbc';
+							  	count = document.getElementById(id+'upvote-count');
+							  	console.log(count.innerHTML)
+								x = parseInt(count.innerHTML) +1
+							  count.innerHTML = x;
+						  }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+		}
+
+		function downvoteAjax(id){
+
+
+		console.log(id);
+
+		  $.ajax({
+				   type: "POST",
+				   url: "{% url 'doDownvote' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+							  // remove downvote
+							  icon = document.getElementById(id+'downvote-icon');
+							  	icon.style.color = 'grey';
+							  	count = document.getElementById(id+'downvote-count');
+							  	console.log(count.innerHTML)
+								x = parseInt(count.innerHTML) -1
+							  count.innerHTML = x;
+						  }
+					      else if (response.message == 0)
+						  {
+								// add upvote
+							  	icon = document.getElementById(id+'downvote-icon');
+							  	icon.style.color = 'red';
+							  	count = document.getElementById(id+'downvote-count');
+							  	console.log(count.innerHTML)
+								x = parseInt(count.innerHTML) +1
+							  count.innerHTML = x;
+						  }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+		}
+
+
+
+	</script>
+
 <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/popper.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>

@@ -172,9 +172,9 @@
 																				<div class="suggestions-list">
 																				{% for following in myfollowing %}
 																				<div class="suggestion-usd" id="following-div-{{following.id}}">
-																					<img src="{{ following.followingId.profile_pic }}" height="35" width="35" alt="">
+																					<a href="/viewProfile/{{ following.followingId.id }}"><img src="{{ following.followingId.profile_pic }}" height="35" width="35" alt=""></a>
 																					<div class="sgt-text">
-																						<p>{{ following.followingId.name }}</p>
+																						<a href="/viewProfile/{{ following.followingId.id }}"><p>{{ following.followingId.name }}</p></a>
 
 																					</div>
 
@@ -244,9 +244,9 @@
 																	  <div class="suggestions-list">
 																		{%  for follower in myfollowers  %}
 																		<div class="suggestion-usd" id="follower-div-{{follower.id}}">
-																			<img src="{{ follower.followerId.profile_pic }}" height="35" width="35" alt="">
+																			<a href="/viewProfile/{{ follower.followerId.id }}"><img src="{{ follower.followerId.profile_pic }}" height="35" width="35" alt=""></a>
 																			<div class="sgt-text">
-																				<p>{{ follower.followerId.name }}</p>
+																				<a href="/viewProfile/{{ follower.followerId.id }}"><p>{{ follower.followerId.name }}</p></a>
 
 																			</div>
 																			<span><a id="{{follower.id}}" onclick="deleteFollowerAjax(this.id)" style=" cursor: pointer ;outline:none; color:white;" class="btn btn-danger btn-sm">Remove</a></span>
@@ -295,9 +295,9 @@
 
 											<div class="post_topbar">
 												<div class="usy-dt">
-													<img src="{{post.post.user_id.profile_pic}}" height="40" width="40" alt="">
+													<a href=""><img src="{{post.post.user_id.profile_pic}}" height="40" width="40" alt=""></a>
 													<div class="usy-name">
-														<h3>{{post.post.user_id.name}}</h3>
+														<a href=""><h3>{{post.post.user_id.name}}</h3></a>
 														<span><img src="{% static 'images/clock.png' %}" alt="">{{post.post.date_time}}</span>
 													</div>
 												</div>
@@ -368,9 +368,9 @@
 
 											{% for i in people %}
 											<div class="suggestion-usd">
-												<img src="{{ i.profile_pic }}" height="35" width="35" alt="">
+												<a href="/viewProfile/{{ i.id }}"><img src="{{ i.profile_pic }}" height="35" width="35" alt=""></a>
 												<div class="sgt-text">
-													<h4>{{ i.name }}</h4>
+													<a href="/viewProfile/{{ i.id }}"> <h4>{{ i.name }}</h4></a>
 
 
 
