@@ -26,17 +26,18 @@ urlpatterns = [
     # path('admin',admin.site.urls),
     path('myProfile',myProfile),
     path('login',login_signup_page),
-    path('checkLogin',checkLogin),
+    path('checkLogin',checkLogin,name='checkLogin'),
     path('',home),
     path('logout', logout),
     path('deleteFollowing', deleteFollowing,name='deleteFollowing'),
     path('unfollowTopic', unfollowTopic,name='unfollowTopic'),
     path('removeFollower', removeFollower, name='removeFollower'),
     path('post/<int:pid>', viewPost, name='viewPost'),
-    path('signup', signup),
+    path('signup', signup,name='signup'),
     path('viewProfile/<int:uid>',viewProfile,name='viewProfile'),
     path('doUpvote',doUpvote,name='doUpvote'),
     path('doDownvote',doDownvote,name='doDownvote'),
+    path('followAjax',followajax,name='followAjax')
     #path('checkLoginAjax',checkLoginAjax,name='checkLoginAjax')
 ]
 

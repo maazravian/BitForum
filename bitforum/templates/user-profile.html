@@ -137,11 +137,11 @@
 											<ul class="flw-status">
 												<li>
 													<span>Following</span>
-													<b>{{ followers_count }}</b>
+													<b>{{ following_count }}</b>
 												</li>
 												<li>
 													<span>Followers</span>
-													<b>{{ following_count }}</b>
+													<b>{{ followers_count }}</b>
 												</li>
 											</ul>
                                             <button class="follow-btn" id="follow-btn" value="follow" style="font-size: 16px; background:#3c8dbc;border:0;padding:12px 27px;margin-top:20px;color:white;cursor: pointer;  ">Follow</button>
@@ -247,7 +247,7 @@
 
 
 												</div>
-												<span><i class="la la-plus"></i></span>
+												<span id="{{ i.id }}" onclick="followAjax(this.id)" ><i id="plusSign{{ i.id }}" class="la la-plus"></i></span>
 											</div>
 											{% endfor %}
 											<div class="view-more">
@@ -357,6 +357,37 @@
 			  });
 		}
 
+function followAjax(id)
+        {
+            console.log(id);
+
+		  $.ajax({
+				   type: "POST",
+				   url: "{% url 'followAjax' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+							  // followed
+                              x = document.getElementById('plusSign'+id)
+                              console.log(x)
+                              x.className = "fa fa-check";
+                          }
+					      else if (response.message == 0)
+						  {
+							// un followed
+                              y=document.getElementById('plusSign'+id)
+                              y.className="la la-plus"
+						  }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+		}
 
 
 	</script>

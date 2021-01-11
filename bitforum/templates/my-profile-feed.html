@@ -380,7 +380,7 @@
 
 
 												</div>
-												<span><i class="la la-plus"></i></span>
+												<span id="{{ i.id }}" onclick="followAjax(this.id)" ><i id="plusSign{{ i.id }}" class="la la-plus"></i></span>
 											</div>
 											{% endfor %}
 
@@ -579,6 +579,38 @@
 							  	console.log(count.innerHTML)
 								x = parseInt(count.innerHTML) +1
 							  count.innerHTML = x;
+						  }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+		}
+
+        	function followAjax(id)
+        {
+            console.log(id);
+
+		  $.ajax({
+				   type: "POST",
+				   url: "{% url 'followAjax' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+							  // followed
+                              x = document.getElementById('plusSign'+id)
+                              console.log(x)
+                              x.className = "fa fa-check";
+                          }
+					      else if (response.message == 0)
+						  {
+							// un followed
+                              y=document.getElementById('plusSign'+id)
+                              y.className="la la-plus"
 						  }
 
 					},

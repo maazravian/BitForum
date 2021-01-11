@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate
 from django.shortcuts import render,redirect
 from posts.models import *
 from django.shortcuts import get_object_or_404
@@ -12,10 +13,15 @@ def viewProfile(request,uid):
     if user.id == uid:
         return redirect(myProfile)
 
-    following_count = FollowersFollowings.objects.filter(followerId=user.id)
-    followers_count = FollowersFollowings.objects.filter(followingId=user.id)
+    userprofile = User.objects.get(id=uid)
+
+    following_count = FollowersFollowings.objects.filter(followerId=userprofile.id)
+    followers_count = FollowersFollowings.objects.filter(followingId=userprofile.id)
+    followed_topics_2 = TopicFollower.objects.filter(followerId=userprofile.id)
+    following_count_2 = FollowersFollowings.objects.filter(followerId=user.id)
+    followers_count_2 = FollowersFollowings.objects.filter(followingId=user.id)
     followed_topics = TopicFollower.objects.filter(followerId=user.id)
-    userprofile=User.objects.get(id=uid)
+
     myPosts = Post.objects.filter(user_id=userprofile)
 
     postsToShow = []
@@ -36,11 +42,12 @@ def viewProfile(request,uid):
 
     people_you_may_know = []
     allUser = User.objects.all()
+
     for u in allUser:
         found = False
         if u.email == user.email:
             continue
-        for temp in following_count:
+        for temp in following_count_2:
             if temp.followingId.email == u.email:
                 found = True
                 break
@@ -53,7 +60,7 @@ def viewProfile(request,uid):
     people_you_may_know = people_you_may_know[0:4]
 
     return render(request,'user-profile.html',{'user': user,'followers_count': len(followers_count),
-                   'following_count': len(following_count) + len(followed_topics),'userprofile':userprofile,'userPosts': postsToShow,'people':people_you_may_know})
+                   'following_count': len(following_count) + len(followed_topics_2),'userprofile':userprofile,'userPosts': postsToShow,'people':people_you_may_know})
 
 def myProfile(request):
     user = User.objects.get(email=request.session['email'])
@@ -122,23 +129,6 @@ def myProfile(request):
 def login_signup_page(request):
     return render(request,'sign-in.html')
 
-def checkLogin(request):
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-        user = User.objects.filter(email = email,password=password)
-        if user.exists():
-            request.session['email'] = email
-            return redirect(home)
-        else:
-            return render(request,'sign-in.html',{'ucheck':'error'})
-
-# def checkLoginAjax(request):
-#
-#     u = request.POST.get('email',None)
-#     print(u)
-#
-#     return JsonResponse({'error':'error'})
 
 def home(request):
     from django.conf import settings
@@ -336,26 +326,6 @@ def viewPost(request,pid):
 
     return render(request,'post-view.html',{'currentUser':currentUser,'post':post,'topics':topicsList,'upvotesList':upvotesList,'upCount':len(upvotesList),'downvotesList':downvotesList,'downCount':len(downvotesList),'commentCount':len(commentsList),'comments':commentsList,'checkUp':checkUpvote,'checkDown':checkDownvote})
 
-def signup(request):
-    if request.method == 'POST':
-        username = request.POST['name']
-        email = request.POST['email']
-        password = request.POST['password']
-        repeatPassword = request.POST['repeat-password']
-        profilePic = request.FILES['profile_pic']
-        print(profilePic)
-        user = User.objects.filter(email = email)
-
-        if user.exists():
-            print(profilePic)
-            return redirect(login_signup_page)
-        else:
-            # profilePic = profilePic.replace(' ','%20')
-            usr = User(name=username, email=email, password=password,profile_pic=profilePic)
-            usr.save()
-            request.session['email'] = email
-            return redirect(home)
-
 
 def doUpvote(request):
     if request.method == 'POST':
@@ -390,3 +360,61 @@ def doDownvote(request):
             p = Post.objects.get(id=postId)
             Downvote(postId=p,userId=user).save()
         return HttpResponse(json.dumps(ctx), content_type='application/json')
+
+
+def checkLogin(request):
+    if request.method == 'POST':
+        email = request.POST.get('email', None)
+        password = request.POST.get('password', None)
+        # email = request.POST['email']
+        # password = request.POST['password']
+
+        user = User.objects.filter(email=email, password=password)
+        if user.exists():
+            request.session['email'] = email
+            ctx = {'message': 1}
+
+        else:
+            ctx = {'message': 0}
+
+        return HttpResponse(json.dumps(ctx))
+
+def signup(request):
+    if request.method == 'POST':
+        username = request.POST['name']
+        email = request.POST['email']
+        password = request.POST['password']
+        repeatPassword = request.POST['repeat-password']
+        profilePic = request.FILES['profile_pic']
+        print(profilePic)
+        user = User.objects.filter(email=email)
+
+        if user.exists():
+            return render(request,'sign-in.html',{'check':1})
+        else:
+
+            usr = User(name=username, email=email, password=password,profile_pic=profilePic)
+            usr.save()
+            request.session['email'] = email
+
+            return redirect(home)
+def followajax(request):
+    if request.method == 'POST':
+        followid = request.POST.get('slug', None)
+        print(followid)
+        user = User.objects.get(email=request.session['email'])
+
+        temp=FollowersFollowings.objects.filter(followerId=user,followingId=User.objects.get(id=followid))
+        if temp.exists():
+            temp.delete()
+            ctx={'message':0}
+        else:
+            usr = FollowersFollowings(followerId=user,followingId =User.objects.get(id=followid))
+            usr.save()
+            ctx = {'message': 1}
+
+
+        return HttpResponse(json.dumps(ctx), content_type='application/json')
+
+
+

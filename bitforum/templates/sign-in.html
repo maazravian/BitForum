@@ -43,22 +43,27 @@
 								<ul class="sign-control">
 									<li data-tab="tab-1" class="current"><a href="#" title="">Sign in</a></li>				
 									<li data-tab="tab-2"><a href="#" title="">Sign up</a></li>				
-								</ul>			
+								</ul>
+
 								<div class="sign_in_sec current" id="tab-1">
-									
+								{% if check %}
+                                    <div class="alert alert-danger" role="alert" id="pwd-alert" style="display: none">
+                                        Password does not match
+                                    </div>
+                                {% endif %}
 									<h3>Sign in</h3>
-									<form action="checkLogin" method="POST">
+									<form   action="/" id="form" method="POST">
 										 {% csrf_token %}
 										<div class="row">
 											<div class="col-lg-12 no-pdd">
 												<div class="sn-field">
-													<input type="text" id="sign-in-email" name="email" placeholder="Email" required>
+													<input type="text" id="nId" name="email" placeholder="Email" required>
 													<i class="la la-user"></i>
 												</div><!--sn-field end-->
 											</div>
 											<div class="col-lg-12 no-pdd">
 												<div class="sn-field">
-													<input type="password" id="sign-in-pwd" name="password" placeholder="Password" required>
+													<input type="password" id="pId" name="password" placeholder="Password" required>
 													<i class="la la-lock"></i>
 												</div>
 											</div>
@@ -75,13 +80,13 @@
 													<a href="#" title="">Forgot Password?</a>
 												</div>
 											</div>
-											{% if ucheck %}
-													<div class="alert alert-danger" style="margin-top: 20px" role="alert">
+
+													<div class="alert alert-danger" id="ucheck" style="margin-top: 20px;display:none" role="alert">
 													  Email or Password is incorrect!
 													</div>
-											{% endif %}
+
 											<div class="col-lg-12 no-pdd">
-												<button type="submit" id="sign-in-btn" value="submit">Sign in</button>
+												<button type="button" onclick="checkloginAjax()" id="sign-in-btn" value="submit">Sign in</button>
 											</div>
 										</div>
 									</form>
@@ -100,7 +105,7 @@
 												</div>
 												<div class="col-lg-12 no-pdd">
 													<div class="sn-field">
-														<input type="email" name="email" placeholder="Email" required>
+														<input type="email" name="email"  placeholder="Email" required>
 														<i class="fa fa-envelope" aria-hidden="true"></i>
 													</div>
 												</div>
@@ -119,6 +124,7 @@
 												<div class="alert alert-danger" role="alert" id="pwd-alert" style="display: none">
 												  Password does not match
 												</div>
+
 												<div class="col-lg-12 no-pdd">
 													<div class="sn-field">
 														<input type="file" name="profile_pic" placeholder="Click" required>
@@ -161,13 +167,55 @@
 
 		if (pwd.value == rpwd.value)
 			signupform.submit();
-		else
-		{
-			alertDiv.style.display = "block";
+
+
+		else {
+            alertDiv.style.display = "block";
+        }
+	}
+
+	function checkloginAjax(){
+	    email=document.getElementById('nId').value
+        password=document.getElementById('pId').value
+        form=document.getElementById('form');
+
+
+
+		  $.ajax({
+				   type: "POST",
+				   url: "{% url 'checkLogin' %}",
+
+				   data: {'email':email,'password':password, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 0)
+						  {
+							  // remove downvote
+                              document.getElementById("ucheck").style.display = "block";
+
+						  }
+					      else if(response.message==1) {
+					          form.submit();
+                          }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
 		}
 
-
-	}
+		pId = document.getElementById('pId')
+	    pId.addEventListener("keyup", function(event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    // Trigger the button element with a click
+    document.getElementById("sign-in-btn").click();
+  }
+});
 
 
 </script>
