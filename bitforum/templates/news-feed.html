@@ -121,8 +121,7 @@
 					<div class="main-section-data">
 						<div class="row">
 							<div class="col-lg-3 col-md-4 pd-left-none no-pd">
-								<div class="main-left-sidebar no-margin" style=" position: sticky;
-  top: 0; ">
+								<div class="main-left-sidebar no-margin" >
 									<div class="user-data full-width">
 										<div class="user-profile">
 											<div class="username-dt">
@@ -395,8 +394,7 @@
 								</div><!--main-ws-sec end-->
 							</div>
 							<div class="col-lg-3 pd-right-none no-pd">
-								<div class="right-sidebar" style=" position: sticky;
-  top: 0;">
+								<div class="right-sidebar">
 									<div class="widget suggestions full-width">
 										<div class="sd-title">
 											<h3>Suggested Topic</h3>
@@ -406,10 +404,10 @@
 											{% for topic in suggested_topics %}
 											<div class="suggestion-usd">
 												<div class="sgt-text">
-													<h4>{{ topic.t | slice:"0:20" | add:"...." }}</h4>
+													<h4>{{ topic.t.topic_name | slice:"0:20" | add:"...." }}</h4>
 													<span>{{ topic.count }}</span>
 												</div>
-												<span><i class="la la-plus"></i></span>
+												<span id="{{ topic.t.id }}" onclick="followTopicAjax(this.id)" ><i id="plusSign2{{ topic.t.id }}" class="la la-plus"></i></span>
 											</div>
 											{% endfor %}
 											<div class="view-more">
@@ -691,6 +689,38 @@
 						   alert(rs.responseText);
 					}
 			  });
+		}
+
+		function followTopicAjax(id){
+			console.log(id);
+
+			$.ajax({
+				   type: "POST",
+				   url: "{% url 'followTopicAjax' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+							  // followed
+                              x = document.getElementById('plusSign2'+id)
+                              console.log(x)
+                              x.className = "fa fa-check";
+                          }
+					      else if (response.message == 0)
+						  {
+							// un followed
+                              y=document.getElementById('plusSign2'+id)
+                              y.className="la la-plus"
+						  }
+
+					},
+					error: function(rs, e) {
+						   document.write(rs.responseText);
+					}
+			  });
+
 		}
 
 	</script>

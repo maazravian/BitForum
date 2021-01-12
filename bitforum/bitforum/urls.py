@@ -37,7 +37,13 @@ urlpatterns = [
     path('viewProfile/<int:uid>',viewProfile,name='viewProfile'),
     path('doUpvote',doUpvote,name='doUpvote'),
     path('doDownvote',doDownvote,name='doDownvote'),
-    path('followAjax',followajax,name='followAjax')
+    path('followAjax',followajax,name='followAjax'),
+    path('followTopicAjax',followTopicAjax,name='followTopicAjax'),
+    path('unfollowUserBtnAjax',unfollowUserBtnAjax,name='unfollowUserBtnAjax'),
+    path('followUserBtnAjax',followUserBtnAjax,name='followUserBtnAjax'),
+    path('postComment/<int:pid>',postComment,name='postComment'),
+    path('downComment',downComment,name='downComment'),
+    path('upComment',upComment,name='upComment'),
     #path('checkLoginAjax',checkLoginAjax,name='checkLoginAjax')
 ]
 

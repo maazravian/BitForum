@@ -10,6 +10,13 @@ from django.db import models
 
 def viewProfile(request,uid):
     user = User.objects.get(email=request.session['email'])
+
+    checkFollowingFlag = False
+    checkFollowing = FollowersFollowings.objects.filter(followerId=user,followingId=User.objects.get(id=uid))
+    if checkFollowing.exists():
+        checkFollowingFlag = True
+
+
     if user.id == uid:
         return redirect(myProfile)
 
@@ -60,7 +67,7 @@ def viewProfile(request,uid):
     people_you_may_know = people_you_may_know[0:4]
 
     return render(request,'user-profile.html',{'user': user,'followers_count': len(followers_count),
-                   'following_count': len(following_count) + len(followed_topics_2),'userprofile':userprofile,'userPosts': postsToShow,'people':people_you_may_know})
+                   'following_count': len(following_count) + len(followed_topics_2),'userprofile':userprofile,'userPosts': postsToShow,'people':people_you_may_know,'check_following_flag':checkFollowingFlag})
 
 def myProfile(request):
     user = User.objects.get(email=request.session['email'])
@@ -260,7 +267,7 @@ def home(request):
         topics_with_follower_count = []
 
         for topic in topics:
-            topics_with_follower_count.append({'t':topic.topic_name,'count':str(len(TopicFollower.objects.filter(topicId=topic.id)))+" Followers"})
+            topics_with_follower_count.append({'t':topic,'count':str(len(TopicFollower.objects.filter(topicId=topic.id)))+" Followers"})
 
 
         return render(request,'news-feed.html',{'newsFeedPosts':postsToShow,'user':user,'followers_count':len(followers_count),'following_count':len(following_count)+len(followed_topics),'people':people_you_may_know,'suggested_topics':topics_with_follower_count,'myfollowers':followers_count,'myfollowing':following_count
@@ -418,3 +425,96 @@ def followajax(request):
 
 
 
+def followTopicAjax(request):
+    if request.method == 'POST':
+        topicId = request.POST.get('slug', None)
+        print(topicId)
+        user = User.objects.get(email=request.session['email'])
+        topic = Topic.objects.get(id=topicId)
+        temp = TopicFollower.objects.filter(topicId=topic,followerId=user)
+        if temp.exists():
+            temp.delete()
+            ctx = {'message': 0}
+        else:
+            usr = TopicFollower(topicId=topic, followerId=user)
+            usr.save()
+            ctx = {'message': 1}
+
+        return HttpResponse(json.dumps(ctx), content_type='application/json')
+
+def unfollowUserBtnAjax(request):
+    if request.method == 'POST':
+        userId = request.POST.get('slug', None)
+
+        suser = User.objects.get(email=request.session['email'])
+
+        FollowersFollowings.objects.get(followerId=suser,followingId=User.objects.get(id=userId)).delete()
+        ctx = {'message':1}
+
+        return HttpResponse(json.dumps(ctx), content_type='application/json')
+
+def followUserBtnAjax(request):
+    if request.method == 'POST':
+        userId = request.POST.get('slug', None)
+
+        suser = User.objects.get(email=request.session['email'])
+
+        FollowersFollowings(followerId=suser, followingId=User.objects.get(id=userId)).save()
+        ctx = {'message': 1}
+
+        return HttpResponse(json.dumps(ctx), content_type='application/json')
+
+
+def postComment(request,pid):
+    if request.method == 'POST':
+        post = Post.objects.get(id=pid)
+        text = request.POST['comment']
+
+
+        user = User.objects.get(email=request.session['email'])
+
+        Comment(userId=user,postId=post,content=text).save()
+
+        commentsList = Comment.objects.filter(postId=pid)
+
+        topicsList = Contains.objects.filter(postId=pid)
+        print(topicsList)
+        upvotesList = Upvote.objects.filter(postId=pid)
+        downvotesList = Downvote.objects.filter(postId=pid)
+        currentUser = User.objects.get(email=request.session['email'])
+
+        checkUpvote = False
+        checkDownvote = False
+
+        try:
+            x = Upvote.objects.get(postId=pid, userId=user)
+            checkUpvote = True
+        except Upvote.DoesNotExist:
+            checkUpvote = False
+        try:
+            x = Downvote.objects.get(postId=pid, userId=user)
+            checkDownvote = True
+        except Downvote.DoesNotExist:
+            checkDownvote = False
+
+        return render(request,'post-view.html',{'currentUser':currentUser,'post':post,'topics':topicsList,'upvotesList':upvotesList,'upCount':len(upvotesList),'downvotesList':downvotesList,'downCount':len(downvotesList),'commentCount':len(commentsList),'comments':commentsList,'checkUp':checkUpvote,'checkDown':checkDownvote})
+
+
+def downComment(request):
+    if request.method == 'POST':
+        commentId = request.POST.get('slug', None)
+        c=Comment.objects.get(id=commentId)
+        c.no_of_down +=1
+        c.save()
+        ctx = {'message': 1}
+    return HttpResponse(json.dumps(ctx), content_type='application/json')
+
+
+def upComment(request):
+    if request.method == 'POST':
+        commentId = request.POST.get('slug', None)
+        c=Comment.objects.get(id=commentId)
+        c.no_of_up +=1
+        c.save()
+        ctx= {'message':1}
+    return HttpResponse(json.dumps(ctx), content_type='application/json')

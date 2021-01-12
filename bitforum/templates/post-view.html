@@ -203,8 +203,8 @@
 																<p> {{ comment.content }} </p>
 																<ul class="like-com" >
 														          <li>
-															        <a href="#"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i> {{ comment.no_of_up }}  </a>
-															        <a href="#"><i class="fa fa-arrow-circle-down"  style="margin-left: 10px" aria-hidden="true"></i>{{ comment.no_of_down }}</a>
+																	  <a onclick="upComment(this.name)" name="{{comment.id}}" id="upCommentSection" style="cursor: pointer"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i><div id="up{{comment.id}}"> {{ comment.no_of_up }}  </div></a>
+																	  <a onclick="downComment(this.name)" name="{{comment.id}}" id="downCommentSection" style="cursor: pointer"><i class="fa fa-arrow-circle-down"  style="margin-left: 10px" aria-hidden="true"></i><div id="down{{comment.id}}">{{ comment.no_of_down }}</div></a>
 
 														          </li>
 													           </ul>
@@ -230,9 +230,10 @@
 								<div class="user-poster">
 									
 									<div class="post_comment_sec">
-										<form>
-											<textarea placeholder="Your Answer"></textarea>
-											<button type="submit">Post Answer</button>
+										<form action="../postComment/{{post.id}}" method="post">
+											{% csrf_token %}
+											<textarea placeholder="Your Answer" name="comment" id="comment-text"></textarea>
+											<button type="submit" >Post Answer</button>
 										</form>
 									</div><!--post_comment_sec end-->
 								</div><!--user-poster end-->
@@ -320,6 +321,7 @@
 						</div>
 					</div>
 				</div><!--forum-questions-sec end-->
+			</div>
 			</div>
 		</section><!--forum-page end-->
 
@@ -438,6 +440,73 @@
 					}
 			  });
 		}
+
+		comment_btn = document.getElementById("comment-btn");
+		comment_btn.onclick = function (){
+			text=document.getElementById("comment-text")
+			console.log(text.value)
+
+
+		}
+
+		function downComment(id){
+			console.log("down" + id);
+
+
+
+
+			 $.ajax({
+				   type: "POST",
+				   url: "{% url 'downComment' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+							  // remove downvote
+							  count = document.getElementById("down"+id);
+								count.innerText = parseInt(count.innerText)+1
+
+								document.getElementById("downCommentSection").style.pointerEvents="none";
+								document.getElementById("downCommentSection").style.cursor="default";
+						  }
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+
+		}
+
+		function upComment(id){
+			console.log("up" + id);
+
+
+			 $.ajax({
+				   type: "POST",
+				   url: "{% url 'upComment' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+							count = document.getElementById("up"+id);
+			count.innerText = parseInt(count.innerText)+1
+
+			document.getElementById("upCommentSection").style.pointerEvents="none";
+			document.getElementById("upCommentSection").style.cursor="default";
+						  }
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+
+
+		}
+
 
 	</script>
 

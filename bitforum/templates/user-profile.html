@@ -16,6 +16,20 @@
 <link rel="stylesheet" type="text/css" href="{% static 'lib/slick/slick-theme.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}">
+
+
+	<style>
+
+		.followBtn{
+			font-size: 16px; background:#bd4147;border:0;padding:12px 27px;margin-top:20px;color:white;cursor: pointer; border: 1px ; border-radius: 10px; outline: none;
+		}
+
+		.unfollowBtn{
+			font-size: 16px; background:#3c8dbc;border:0;padding:12px 27px;margin-top:20px;color:white;cursor: pointer; border: 1px ; border-radius: 10px; outline: none;
+
+		}
+
+	</style>
 </head>
 
 
@@ -141,10 +155,14 @@
 												</li>
 												<li>
 													<span>Followers</span>
-													<b>{{ followers_count }}</b>
+													<b id="follower-count">{{ followers_count }}</b>
 												</li>
 											</ul>
-                                            <button class="follow-btn" id="follow-btn" value="follow" style="font-size: 16px; background:#3c8dbc;border:0;padding:12px 27px;margin-top:20px;color:white;cursor: pointer;  ">Follow</button>
+											{% if check_following_flag %}
+                                            	<button class="followBtn" id="{{userprofile.id}}" value="follow" style="" onclick="unfollowUserAjax(this.id)" >Unfollow</button>
+											{% else %}
+												<button class="unfollowBtn" id="{{userprofile.id}}" value="follow" style="" onclick="followUserAjax(this.id)">Follow</button>
+											{% endif %}
 										</div><!--user_pro_status end-->
 									</div><!--user_profile end-->
 
@@ -389,6 +407,63 @@ function followAjax(id)
 			  });
 		}
 
+		function unfollowUserAjax(id){
+			console.log(id);
+
+			$.ajax({
+				   type: "POST",
+				   url: "{% url 'unfollowUserBtnAjax' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1) {
+							  // followed
+							  x = document.getElementById(id)
+							  console.log(x)
+							  x.innerText = "Follow";
+							  x.style.backgroundColor = "#3c8dbc";
+							  x.className = "followBtn";
+							  document.getElementById("follower-count").innerText = parseInt(document.getElementById("follower-count").innerText)-1;
+							  x.setAttribute( "onClick", "javascript: followUserAjax(this.id);" );
+						  }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+
+		}
+		function followUserAjax(id){
+			console.log(id);
+
+			$.ajax({
+				   type: "POST",
+				   url: "{% url 'followUserBtnAjax' %}",
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1) {
+							  // followed
+							  x = document.getElementById(id)
+							  console.log(x)
+							  x.innerText = "Unfollow"
+							  x.style.backgroundColor = "#bd4147";
+							  x.className = "unfollowBtn";
+							  document.getElementById("follower-count").innerText = parseInt(document.getElementById("follower-count").innerText)+1;
+							  x.setAttribute( "onClick", "javascript: unfollowUserAjax(this.id);" );
+
+						  }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+
+		}
 
 	</script>
 
