@@ -121,7 +121,8 @@
 					<div class="main-section-data">
 						<div class="row">
 							<div class="col-lg-3 col-md-4 pd-left-none no-pd">
-								<div class="main-left-sidebar no-margin">
+								<div class="main-left-sidebar no-margin" style=" position: sticky;
+  top: 0; ">
 									<div class="user-data full-width">
 										<div class="user-profile">
 											<div class="username-dt">
@@ -130,7 +131,7 @@
 												</div>
 											</div><!--username-dt end-->
 											<div class="user-specs">
-												<h3> {{ user.name }} </h3>
+                                                <a href="viewProfile/{{ user.id }}"><h3> {{ user.name }}</h3></a>
 												<span>{{ user.status }}</span>
 											</div>
 										</div><!--user-profile end-->
@@ -298,7 +299,7 @@
 											</ul>
 											<div class="post-popup pst-pj">
 			<div class="post-project">
-				<h3>Post a project</h3>
+				<h3>Post</h3>
 				<div class="post-project-fields">
 					<form>
 						<div class="row">
@@ -306,38 +307,18 @@
 								<input type="text" name="title" placeholder="Title">
 							</div>
 							<div class="col-lg-12">
-								<div class="inp-field">
-									<select>
-										<option>Category</option>
-										<option>Category 1</option>
-										<option>Category 2</option>
-										<option>Category 3</option>
-									</select>
-								</div>
+								<textarea name="content" placeholder="Content"></textarea>
 							</div>
-							<div class="col-lg-12">
-								<input type="text" name="skills" placeholder="Skills">
+                            <div class="col-lg-12">
+								<input type="text" name="Topic" placeholder="Topic">
 							</div>
-							<div class="col-lg-12">
-								<div class="price-sec">
-									<div class="price-br">
-										<input type="text" name="price1" placeholder="Price">
-										<i class="la la-dollar"></i>
-									</div>
-									<span>To</span>
-									<div class="price-br">
-										<input type="text" name="price1" placeholder="Price">
-										<i class="la la-dollar"></i>
-									</div>
-								</div>
-							</div>
-							<div class="col-lg-12">
-								<textarea name="description" placeholder="Description"></textarea>
+                            <div class="col-lg-12">
+								<input type="file"   width="48" height="48">
 							</div>
 							<div class="col-lg-12">
 								<ul>
 									<li><button class="active" type="submit" value="post">Post</button></li>
-									<li><a href="#" title="">Cancel</a></li>
+
 								</ul>
 							</div>
 						</div>
@@ -414,7 +395,8 @@
 								</div><!--main-ws-sec end-->
 							</div>
 							<div class="col-lg-3 pd-right-none no-pd">
-								<div class="right-sidebar">
+								<div class="right-sidebar" style=" position: sticky;
+  top: 0;">
 									<div class="widget suggestions full-width">
 										<div class="sd-title">
 											<h3>Suggested Topic</h3>
