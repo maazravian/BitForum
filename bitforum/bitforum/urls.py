@@ -46,6 +46,7 @@ urlpatterns = [
     path('upComment',upComment,name='upComment'),
     path('makePost',makePost,name='makePost'),
     path('fetchNotification',fetchNotification,name='fetchNotification'),
+    path('mark_all_as_read',mark_all_as_read,name='mark_all_as_read'),
     #path('checkLoginAjax',checkLoginAjax,name='checkLoginAjax')
 ]
 

@@ -66,6 +66,21 @@ def viewProfile(request,uid):
 
     people_you_may_know = people_you_may_know[0:4]
 
+
+    for p in postsToShow:
+        try:
+            x = Upvote.objects.get(postId=p['post'].id, userId=user)
+            p['checkUp'] = True
+        except Upvote.DoesNotExist:
+            p['checkUp'] = False
+        try:
+            x = Downvote.objects.get(postId=p['post'].id, userId=user)
+            p['checkDown'] = True
+        except Downvote.DoesNotExist:
+            p['checkDown'] = False
+
+
+
     return render(request,'user-profile.html',{'user': user,'followers_count': len(followers_count),
                    'following_count': len(following_count) + len(followed_topics_2),'userprofile':userprofile,'userPosts': postsToShow,'people':people_you_may_know,'check_following_flag':checkFollowingFlag})
 
@@ -125,6 +140,19 @@ def myProfile(request):
             {'t': topic.topic_name, 'count': str(len(TopicFollower.objects.filter(topicId=topic.id))) + " Followers"})
 
     people_you_may_know = people_you_may_know[0:4]
+
+    for p in postsToShow:
+        try:
+            x = Upvote.objects.get(postId=p['post'].id, userId=user)
+            p['checkUp'] = True
+        except Upvote.DoesNotExist:
+            p['checkUp'] = False
+        try:
+            x = Downvote.objects.get(postId=p['post'].id, userId=user)
+            p['checkDown'] = True
+        except Downvote.DoesNotExist:
+            p['checkDown'] = False
+
 
     return render(request, 'my-profile-feed.html',
                   {'newsFeedPosts': postsToShow, 'user': user, 'followers_count': len(followers_count),
@@ -260,7 +288,7 @@ def home(request):
         newList = {x['post']: x for x in postsToShow}.values()
         postsToShow = newList
 
-        print(postsToShow)
+
         for p in postsToShow:
             try:
                 x = Upvote.objects.get(postId=p['post'].id, userId=user)
@@ -274,7 +302,7 @@ def home(request):
                 p['checkDown'] = False
 
 
-        print(postsToShow)
+
         #postsToShow = postsToShow[0:10]
 
         topics = topics[0:4]
@@ -372,6 +400,12 @@ def doUpvote(request):
             # do upvote
             p = Post.objects.get(id=postId)
             Upvote(postId=p,userId=user).save()
+            # for notification
+            recieving_user = User.objects.get(id=User.objects.get(email=Post.objects.get(id=postId).user_id).id)
+            sending_user = user
+            type = "UP"
+            Notification(reciever_id=recieving_user, sender_id=sending_user, postId=Post.objects.get(id=postId),
+            type=type).save()
         return HttpResponse(json.dumps(ctx), content_type='application/json')
 
 def doDownvote(request):
@@ -389,6 +423,13 @@ def doDownvote(request):
             # do upvote
             p = Post.objects.get(id=postId)
             Downvote(postId=p,userId=user).save()
+
+            # for notification
+            recieving_user = User.objects.get(id=User.objects.get(email=Post.objects.get(id=postId).user_id).id)
+            sending_user = user
+            type = "DOWN"
+            Notification(reciever_id=recieving_user, sender_id=sending_user, postId=Post.objects.get(id=postId),
+            type=type).save()
         return HttpResponse(json.dumps(ctx), content_type='application/json')
 
 
@@ -442,6 +483,13 @@ def followajax(request):
             usr = FollowersFollowings(followerId=user,followingId =User.objects.get(id=followid))
             usr.save()
             ctx = {'message': 1}
+            # for notification
+            recieving_user = User.objects.get(id=followid)
+            sending_user = user
+            type = "FOLLOW"
+            Notification(reciever_id=recieving_user, sender_id=sending_user,
+                         type=type).save()
+
 
 
         return HttpResponse(json.dumps(ctx), content_type='application/json')
@@ -484,6 +532,13 @@ def followUserBtnAjax(request):
 
         FollowersFollowings(followerId=suser, followingId=User.objects.get(id=userId)).save()
         ctx = {'message': 1}
+
+        # for notification
+        recieving_user = User.objects.get(id=userId)
+        sending_user = suser
+        type = "FOLLOW"
+        Notification(reciever_id=recieving_user, sender_id=sending_user,
+        type=type).save()
 
         return HttpResponse(json.dumps(ctx), content_type='application/json')
 
@@ -581,11 +636,13 @@ def fetchNotification(request):
         user = User.objects.get(email=request.session['email'])
         notifications = Notification.objects.filter(reciever_id=user,seen=False).values('sender_id','reciever_id','type','postId')
         if notifications.exists():
-            data = Notification.objects.filter(reciever_id=user,seen=False).values('sender_id','reciever_id','type','postId')
+            data = Notification.objects.filter(reciever_id=user,seen=False).values('sender_id','reciever_id','type','postId').exclude(sender_id=user)
             querySet=[]
             for i in data:
+                i['profile_id'] = i['sender_id']
                 i['sender_id'] = User.objects.get(id=i["sender_id"]).name
                 i['reciever_id'] = User.objects.get(id=i["reciever_id"]).name
+
                 querySet.append(i)
 
             ctx = {'message':1,'data':querySet}
@@ -595,3 +652,13 @@ def fetchNotification(request):
 
 
     return HttpResponse(json.dumps(ctx), content_type='application/json')
+
+def mark_all_as_read(request):
+    if request.method == "GET":
+        notifications = Notification.objects.filter(reciever_id=User.objects.get(email=request.session["email"]))
+        for notification in notifications:
+            notification.seen=True
+            notification.save()
+
+        ctx={'message':1}
+    return HttpResponse(json.dumps(ctx),content_type='application/json')

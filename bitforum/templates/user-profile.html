@@ -33,7 +33,7 @@
 </head>
 
 
-<body>
+<body onload="start()">
 	
 
 	<div class="wrapper">
@@ -58,51 +58,16 @@
 								</a>
 							</li>
 							<li>
-								<a href="#" title="" class="not-box-open">
+								<a onclick="fetchNotification()" title="" class="not-box-open">
 									<span><img src="{% static 'images/icon7.png' %}" alt=""></span>
+									 <span class="badge badge-light" id="noti-count"></span>
 									Notification
 								</a>
 								<div class="notification-box">
 									<div class="nt-title">
-										<a href="#" title="">Mark as read</a>
+										<a style="cursor: pointer" onclick="markAllAsRead()" title="">Mark all as read</a>
 									</div>
-									<div class="nott-list">
-										<div class="notfication-details">
-							  				<div class="noty-user-img">
-							  					<img src="{% static 'images/resources/ny-img1.png' %}" alt="">
-							  				</div>
-							  				<div class="notification-info">
-							  					<h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
-							  					<span>2 min ago</span>
-							  				</div><!--notification-info -->
-						  				</div>
-						  				<div class="notfication-details">
-							  				<div class="noty-user-img">
-							  					<img src="{% static 'images/resources/ny-img2.png' %}" alt="">
-							  				</div>
-							  				<div class="notification-info">
-							  					<h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
-							  					<span>2 min ago</span>
-							  				</div><!--notification-info -->
-						  				</div>
-						  				<div class="notfication-details">
-							  				<div class="noty-user-img">
-							  					<img src="{% static 'images/resources/ny-img3.png' %}" alt="">
-							  				</div>
-							  				<div class="notification-info">
-							  					<h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
-							  					<span>2 min ago</span>
-							  				</div><!--notification-info -->
-						  				</div>
-						  				<div class="notfication-details">
-							  				<div class="noty-user-img">
-							  					<img src="{% static 'images/resources/ny-img2.png' %}" alt="">
-							  				</div>
-							  				<div class="notification-info">
-							  					<h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
-							  					<span>2 min ago</span>
-							  				</div><!--notification-info -->
-						  				</div>	
+									<div class="nott-list" id="noti-panel">
 									</div><!--nott-list end-->
 								</div><!--notification-box end-->
 							</li>
@@ -214,11 +179,19 @@
 
 															<a onclick="upvoteAjax(this.name)" name="{{post.post.id}}"  style="cursor:pointer;">
 
+															{% if post.checkUp %}
+															<i class="fa fa-arrow-circle-up" id="{{post.post.id}}upvote-icon" style="color: #3c8dbc" aria-hidden="true"></i>
+															{% else %}
 															<i class="fa fa-arrow-circle-up" id="{{post.post.id}}upvote-icon" aria-hidden="true"></i>
+															{% endif %}
 
 																<div style="float: right" id="{{post.post.id}}upvote-count"> {{post.upvote}}  </div></a>
 															<a style="cursor: pointer" onclick="downvoteAjax(this.name)" name="{{post.post.id}}" >
+																{% if post.checkDown %}
+																<i class="fa fa-arrow-circle-down" id="{{post.post.id}}downvote-icon" style="color:red;"  aria-hidden="true"></i>
+																{% else %}
 																<i class="fa fa-arrow-circle-down" id="{{post.post.id}}downvote-icon"  aria-hidden="true"></i>
+																{% endif %}
 
 
 																<div style="float: right" id="{{post.post.id}}downvote-count"> {{post.downvote}}  </div></a>
@@ -465,6 +438,106 @@ function followAjax(id)
 			  });
 
 		}
+
+
+	//	notification section
+		function update(){
+		console.log("Updating..")
+		document.getElementById('noti-panel').innerHTML=""
+		fetchNotification();
+
+	}
+	var myGlobalTemp;
+	function start(){
+		console.log("INITIATED");
+
+		myVar = setInterval(update,4000);
+		myGlobalTemp = myVar;
+	}
+
+	function fetchNotification(){
+		console.log('fetching noti');
+		$.ajax({
+				   type: "GET",
+				   url: "{% url 'fetchNotification' %}",
+
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+						  	console.log(response.data)
+							  data = response.data
+							parsedjson = JSON.parse(JSON.stringify(response.data))
+
+							c=document.getElementById("noti-count")
+
+							c.innerText = data.length;
+
+						  	temp = document.getElementById('noti-panel')
+						  	for(var i=data.length-1;i>=0;i--)
+							{
+								if(parsedjson[i]["type"]=="COMMENT")
+								{
+									temp.innerHTML +=  "<div style=' color: black;height: 50px ;margin-top: auto;margin-inside: auto; padding: 5px'><a style='color: black' href='../post/"+ parsedjson[i]["postId"] +"'<div>"+ parsedjson[i]["sender_id"] +" has commented on your post </div></a></div>";
+								}
+								else if(parsedjson[i]["type"]=="UP")
+								{
+									temp.innerHTML +=  "<div style=' color: black;height: 50px ;margin-top: auto;margin-inside: auto; padding: 5px'><a style='color: black' href='../post/"+ parsedjson[i]["postId"] +"'<div>"+ parsedjson[i]["sender_id"] +" has upvoted your post </div></a></div>";
+
+								}
+								else if (parsedjson[i]["type"] == "DOWN")
+								{
+									temp.innerHTML +=  "<div style=' color: black;height: 50px ;margin-top: auto;margin-inside: auto; padding: 5px'><a style='color: black' href='../post/"+ parsedjson[i]["postId"] +"'<div>"+ parsedjson[i]["sender_id"] +" has downvoted your post </div></a></div>";
+
+								}
+								else if (parsedjson[i]["type"]=="FOLLOW")
+								{
+									temp.innerHTML +=  "<div style=' color: black;height: 50px ;margin-top: auto;margin-inside: auto; padding: 5px'><a style='color: black' href='../viewProfile/"+ parsedjson[i]["profile_id"] +"'<div>"+ parsedjson[i]["sender_id"] +" has started following you </div></a></div>";
+
+								}
+
+							}
+
+
+
+                          }
+					      else{
+					      	console.log("No notifications")
+
+						  }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+
+	}
+
+	function markAllAsRead()
+	{
+		$.ajax({
+				   type: "GET",
+				   url: "{% url 'mark_all_as_read' %}",
+
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+							  // followed
+                              console.log("Notifications cleared")
+
+                          }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+	}
+
 
 	</script>
 

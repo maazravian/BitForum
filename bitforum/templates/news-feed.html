@@ -50,7 +50,7 @@
 								</a>
 								<div class="notification-box">
 									<div class="nt-title">	
-										<a href="#" title="">Mark as read</a>
+										<a style="cursor: pointer" onclick="markAllAsRead()" title="">Mark all as read</a>
 									</div>
 									<div class="nott-list" id="noti-panel">
 
@@ -744,12 +744,32 @@
 							parsedjson = JSON.parse(JSON.stringify(response.data))
 
 							c=document.getElementById("noti-count")
+
 							c.innerText = data.length;
 
 						  	temp = document.getElementById('noti-panel')
-						  	for(var i=0;i<data.length;i++)
+						  	for(var i=data.length-1;i>=0;i--)
 							{
-								temp.innerHTML +=  "<div>"+ parsedjson[i]["type"] +"</div>";
+								if(parsedjson[i]["type"]=="COMMENT")
+								{
+									temp.innerHTML +=  "<div style=' color: black;height: 50px ;margin-top: auto;margin-inside: auto; padding: 5px'><a style='color: black' href='post/"+ parsedjson[i]["postId"] +"'<div>"+ parsedjson[i]["sender_id"] +" has commented on your post </div></a></div>";
+								}
+								else if(parsedjson[i]["type"]=="UP")
+								{
+									temp.innerHTML +=  "<div style=' color: black;height: 50px ;margin-top: auto;margin-inside: auto; padding: 5px'><a style='color: black' href='post/"+ parsedjson[i]["postId"] +"'<div>"+ parsedjson[i]["sender_id"] +" has upvoted your post </div></a></div>";
+
+								}
+								else if (parsedjson[i]["type"] == "DOWN")
+								{
+									temp.innerHTML +=  "<div style=' color: black;height: 50px ;margin-top: auto;margin-inside: auto; padding: 5px'><a style='color: black' href='post/"+ parsedjson[i]["postId"] +"'<div>"+ parsedjson[i]["sender_id"] +" has downvoted your post </div></a></div>";
+
+								}
+								else if (parsedjson[i]["type"]=="FOLLOW")
+								{
+									temp.innerHTML +=  "<div style=' color: black;height: 50px ;margin-top: auto;margin-inside: auto; padding: 5px'><a style='color: black' href='viewProfile/"+ parsedjson[i]["profile_id"] +"'<div>"+ parsedjson[i]["sender_id"] +" has started following you </div></a></div>";
+
+								}
+
 							}
 
 
@@ -768,7 +788,28 @@
 
 	}
 
+	function markAllAsRead()
+	{
+		$.ajax({
+				   type: "GET",
+				   url: "{% url 'mark_all_as_read' %}",
 
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+							  // followed
+                              console.log("Notifications cleared")
+
+                          }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+	}
 
 	</script>
 

@@ -78,5 +78,8 @@ class Notification(models.Model):
     seen = models.BooleanField(default=False)
     reciever_id = models.ForeignKey(User,related_name='recieving_user',on_delete=models.CASCADE)
     sender_id = models.ForeignKey(User,related_name='sending_user',on_delete=models.CASCADE)
-    postId = models.ForeignKey(Post,related_name='related_post',on_delete=models.CASCADE,default=None)
+    postId = models.ForeignKey(Post,related_name='related_post',on_delete=models.CASCADE,default=None,null=True)
     type = models.TextField()
+
+    def __str__(self):
+        return str(self.sender_id) + " " +str(self.type) +" "+ str(self.reciever_id)
