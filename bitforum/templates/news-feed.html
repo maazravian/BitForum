@@ -158,7 +158,7 @@
 
 
 
-																				<div class="suggestions-list">
+																				<div class="suggestions-list" >
 																				{% for following in myfollowing %}
 																				<div class="suggestion-usd" id="following-div-{{following.id}}">
 																					<a href="/viewProfile/{{ following.followingId.id }}"><img src="{{ following.followingId.profile_pic }}" height="35" width="35" alt=""></a>
@@ -393,9 +393,10 @@
 									</div><!--posts-section end-->
 								</div><!--main-ws-sec end-->
 							</div>
-							<div class="col-lg-3 pd-right-none no-pd">
-								<div class="right-sidebar">
-									<div class="widget suggestions full-width">
+							<div class="col-lg-3 pd-right-none no-pd" >
+								<div class="right-sidebar" style="position: sticky;
+  top: 0;">
+									<div class="widget suggestions full-width" >
 										<div class="sd-title">
 											<h3>Suggested Topic</h3>
 											<i class="la la-ellipsis-v"></i>
