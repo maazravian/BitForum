@@ -260,7 +260,21 @@ def home(request):
         newList = {x['post']: x for x in postsToShow}.values()
         postsToShow = newList
 
+        print(postsToShow)
+        for p in postsToShow:
+            try:
+                x = Upvote.objects.get(postId=p['post'].id, userId=user)
+                p['checkUp'] = True
+            except Upvote.DoesNotExist:
+                p['checkUp'] = False
+            try:
+                x = Downvote.objects.get(postId=p['post'].id, userId=user)
+                p['checkDown'] = True
+            except Downvote.DoesNotExist:
+                p['checkDown'] = False
 
+
+        print(postsToShow)
         #postsToShow = postsToShow[0:10]
 
         topics = topics[0:4]
@@ -330,8 +344,17 @@ def viewPost(request,pid):
     except Downvote.DoesNotExist:
          checkDownvote = False
 
-
-    return render(request,'post-view.html',{'currentUser':currentUser,'post':post,'topics':topicsList,'upvotesList':upvotesList,'upCount':len(upvotesList),'downvotesList':downvotesList,'downCount':len(downvotesList),'commentCount':len(commentsList),'comments':commentsList,'checkUp':checkUpvote,'checkDown':checkDownvote})
+    image = PostImage.objects.filter(postId=pid)
+    print(image)
+    if image.exists():
+        image = image[0]
+        return render(request, 'post-view.html',
+                      {'currentUser': currentUser, 'post': post, 'topics': topicsList, 'upvotesList': upvotesList,
+                       'upCount': len(upvotesList), 'downvotesList': downvotesList, 'downCount': len(downvotesList),
+                       'commentCount': len(commentsList), 'comments': commentsList, 'checkUp': checkUpvote,
+                       'checkDown': checkDownvote,'PostImage':image})
+    else:
+        return render(request,'post-view.html',{'currentUser':currentUser,'post':post,'topics':topicsList,'upvotesList':upvotesList,'upCount':len(upvotesList),'downvotesList':downvotesList,'downCount':len(downvotesList),'commentCount':len(commentsList),'comments':commentsList,'checkUp':checkUpvote,'checkDown':checkDownvote,'PostImage':False})
 
 
 def doUpvote(request):
@@ -497,6 +520,12 @@ def postComment(request,pid):
         except Downvote.DoesNotExist:
             checkDownvote = False
 
+        #for notification
+        recieving_user = User.objects.get(id=User.objects.get(email=Post.objects.get(id=pid).user_id).id)
+        sending_user = user
+        type="COMMENT"
+        Notification(reciever_id=recieving_user,sender_id=sending_user,postId=Post.objects.get(id=pid),type=type).save()
+
         return render(request,'post-view.html',{'currentUser':currentUser,'post':post,'topics':topicsList,'upvotesList':upvotesList,'upCount':len(upvotesList),'downvotesList':downvotesList,'downCount':len(downvotesList),'commentCount':len(commentsList),'comments':commentsList,'checkUp':checkUpvote,'checkDown':checkDownvote})
 
 
@@ -517,4 +546,52 @@ def upComment(request):
         c.no_of_up +=1
         c.save()
         ctx= {'message':1}
+    return HttpResponse(json.dumps(ctx), content_type='application/json')
+
+
+def makePost(request):
+    if request.method == 'POST':
+        user= User.objects.get(email=request.session['email'])
+        title = request.POST['title']
+        content = request.POST['content']
+        topics = request.POST['topics']
+        topicsList = topics.split(',')
+        p = Post(title=title, content=content, user_id=user)
+        p.save()
+        for topic in topicsList:
+            topic=topic.strip()
+            topic=topic.upper()
+            if Topic.objects.filter(topic_name=topic).exists():
+                Contains(postId=p,topicId=Topic.objects.get(topic_name=topic)).save()
+                continue
+            else:
+                x=Topic(topic_name=topic)
+                x.save()
+                Contains(postId=p,topicId=x).save()
+        try:
+            image = request.FILES['image']
+            PostImage(image=image, postId=p).save()
+        except:
+            pass
+
+    return redirect(home)
+
+def fetchNotification(request):
+    if request.method == 'GET':
+        user = User.objects.get(email=request.session['email'])
+        notifications = Notification.objects.filter(reciever_id=user,seen=False).values('sender_id','reciever_id','type','postId')
+        if notifications.exists():
+            data = Notification.objects.filter(reciever_id=user,seen=False).values('sender_id','reciever_id','type','postId')
+            querySet=[]
+            for i in data:
+                i['sender_id'] = User.objects.get(id=i["sender_id"]).name
+                i['reciever_id'] = User.objects.get(id=i["reciever_id"]).name
+                querySet.append(i)
+
+            ctx = {'message':1,'data':querySet}
+        else:
+            ctx = {'message':0}
+
+
+
     return HttpResponse(json.dumps(ctx), content_type='application/json')

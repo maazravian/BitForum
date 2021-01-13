@@ -69,3 +69,14 @@ class Comment(models.Model):
     date_time = models.DateTimeField(auto_now_add=True)
     no_of_up = models.PositiveIntegerField(default=0)
     no_of_down = models.PositiveIntegerField(default=0)
+
+class PostImage(models.Model):
+    image = models.ImageField(upload_to='')
+    postId = models.ForeignKey(Post,related_name='postImage',on_delete=models.CASCADE)
+
+class Notification(models.Model):
+    seen = models.BooleanField(default=False)
+    reciever_id = models.ForeignKey(User,related_name='recieving_user',on_delete=models.CASCADE)
+    sender_id = models.ForeignKey(User,related_name='sending_user',on_delete=models.CASCADE)
+    postId = models.ForeignKey(Post,related_name='related_post',on_delete=models.CASCADE,default=None)
+    type = models.TextField()

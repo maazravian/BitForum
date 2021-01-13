@@ -44,6 +44,8 @@ urlpatterns = [
     path('postComment/<int:pid>',postComment,name='postComment'),
     path('downComment',downComment,name='downComment'),
     path('upComment',upComment,name='upComment'),
+    path('makePost',makePost,name='makePost'),
+    path('fetchNotification',fetchNotification,name='fetchNotification'),
     #path('checkLoginAjax',checkLoginAjax,name='checkLoginAjax')
 ]
 

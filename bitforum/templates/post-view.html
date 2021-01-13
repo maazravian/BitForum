@@ -156,6 +156,11 @@
 													</ul>
 													<p>{{post.content}}</p>
 													<!-- topics -->
+													{% if PostImage %}
+													<div>
+														<img src="/{{PostImage.image}}" height="" width="100%">
+													</div>
+													{% endif %}
 
 												</div>
 												<div class="job-status-bar">
