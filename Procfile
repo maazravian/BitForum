@@ -1,1 +1,1 @@
-web: gunicorn bitforum.wsgi
+"web: gunicorn mysite.wsgi --log-file -" 
