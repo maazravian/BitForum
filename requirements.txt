@@ -3,3 +3,4 @@ pillow
 django-cleanup
 gunicorn
 django-heroku
+whitenoise
