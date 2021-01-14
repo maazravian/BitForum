@@ -9,6 +9,8 @@ from django.db import models
 
 
 def viewProfile(request,uid):
+    if 'email' not in request.session:
+        return redirect(login_signup_page)
     user = User.objects.get(email=request.session['email'])
 
     checkFollowingFlag = False
@@ -66,6 +68,8 @@ def viewProfile(request,uid):
 
     people_you_may_know = people_you_may_know[0:4]
 
+    postsToShow = postsToShow[::-1]
+
 
     for p in postsToShow:
         try:
@@ -85,6 +89,8 @@ def viewProfile(request,uid):
                    'following_count': len(following_count) + len(followed_topics_2),'userprofile':userprofile,'userPosts': postsToShow,'people':people_you_may_know,'check_following_flag':checkFollowingFlag})
 
 def myProfile(request):
+    if 'email' not in request.session:
+        return redirect(login_signup_page)
     user = User.objects.get(email=request.session['email'])
     allUser = User.objects.all()
     following_count = FollowersFollowings.objects.filter(followerId=user.id)
@@ -140,6 +146,8 @@ def myProfile(request):
             {'t': topic.topic_name, 'count': str(len(TopicFollower.objects.filter(topicId=topic.id))) + " Followers"})
 
     people_you_may_know = people_you_may_know[0:4]
+
+    postsToShow = postsToShow[::-1]
 
     for p in postsToShow:
         try:
@@ -286,8 +294,11 @@ def home(request):
             postsToShow.append(onePost)
 
         newList = {x['post']: x for x in postsToShow}.values()
-        postsToShow = newList
+        postsToShow = list(newList)
 
+
+        postsToShow = sorted(postsToShow, key=lambda k: k['post'].date_time)
+        postsToShow = postsToShow[::-1]
 
         for p in postsToShow:
             try:
@@ -346,6 +357,8 @@ def removeFollower(request):
     return HttpResponse(json.dumps(ctx), content_type='application/json')
 
 def viewPost(request,pid):
+    if 'email' not in request.session:
+        return redirect(login_signup_page)
     post = Post.objects.get(id=pid)
     post.no_of_views +=1
     post.save()
@@ -662,3 +675,40 @@ def mark_all_as_read(request):
 
         ctx={'message':1}
     return HttpResponse(json.dumps(ctx),content_type='application/json')
+
+
+def deletePost(request):
+    if request.method=="POST":
+        post_id = request.POST.get('slug', None)
+        print(post_id)
+        p = Post.objects.filter(id=post_id)
+        print(p)
+        p.delete()
+        ctx = {'message':1}
+    return HttpResponse(json.dumps(ctx),content_type='application/json')
+
+def saveEditProfile(request):
+    if request.method == 'POST':
+        u = User.objects.get(email=request.session['email'])
+        try:
+            name = request.POST['name']
+            u.name = name
+        except:
+            pass
+        try:
+            status = request.POST['status']
+            u.status = status
+        except:
+            pass
+        try:
+            profilePic = request.FILES['profile_pic']
+            u.profile_pic = profilePic
+        except:
+            pass
+
+        u.save()
+
+        return redirect(myProfile)
+def search(request):
+    user = User.objects.get(email=request.session['email'])
+    return render(request,'search-page.html',{'currentUser':user})

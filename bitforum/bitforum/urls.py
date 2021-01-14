@@ -47,7 +47,10 @@ urlpatterns = [
     path('makePost',makePost,name='makePost'),
     path('fetchNotification',fetchNotification,name='fetchNotification'),
     path('mark_all_as_read',mark_all_as_read,name='mark_all_as_read'),
-    #path('checkLoginAjax',checkLoginAjax,name='checkLoginAjax')
+    path('deletePost',deletePost,name='deletePost'),
+    path('saveEditProfile',saveEditProfile,name='saveEditProfile'),
+    path('search',search,name='search')
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

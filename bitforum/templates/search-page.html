@@ -1,0 +1,267 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Search</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/animate.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/line-awesome.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/line-awesome-font-awesome.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.mCustomScrollbar.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'lib/slick/slick.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'lib/slick/slick-theme.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}">
+</head>
+
+
+<body onload="start()">
+
+
+	<div class="wrapper">
+
+
+
+		<header>
+			<div class="container">
+				<div class="header-data">
+					<div class="logo">
+						<a href="../" title=""><img src="{% static 'images/logo.png' %}" height="50" width="50" alt=""></a>
+					</div><!--logo end-->
+					<div class="search-bar">
+						<form>
+							<input type="text" name="search" placeholder="Search...">
+							<button type="submit"><i class="la la-search"></i></button>
+						</form>
+					</div><!--search-bar end-->
+					<nav>
+						<ul>
+							<li>
+								<a href="../" title="">
+									<span><img src="{% static 'images/icon1.png' %}"  alt=""></span>
+									Home
+								</a>
+							</li>
+
+							<li>
+								<a onclick="fetchNotification()" title="" class="not-box-open">
+									<span><img src="{% static 'images/icon7.png' %}" alt=""></span>
+									 <span class="badge badge-light" id="noti-count"></span>
+									Notification
+								</a>
+								<div class="notification-box">
+									<div class="nt-title">
+										<a style="cursor: pointer" onclick="markAllAsRead()" title="">Mark all as read</a>
+									</div>
+									<div class="nott-list" id="noti-panel">
+						  													</div><!--nott-list end-->
+								</div><!--notification-box end-->
+							</li>
+						</ul>
+
+					</nav><!--nav end-->
+					<div class="menu-btn">
+						<a href="#" title=""><i class="fa fa-bars"></i></a>
+					</div><!--menu-btn end-->
+					<div class="user-account">
+						<div class="user-info" >
+							<img src=" ../{{currentUser.profile_pic }} " height="30" width="30" alt="" style="margin-left:40px">
+
+
+							<i class="la la-sort-down"></i>
+						</div>
+						<div class="user-account-settingss">
+							<h3>Profile</h3>
+							<ul class="us-links">
+								<li><a href="/myProfile" title="">{{currentUser.name}}</a></li>
+							</ul>
+							<h3 class="tc"><a href="/logout" title="">Logout</a></h3>
+						</div><!--user-account-settingss end-->
+					</div>
+		</header>
+        <section class="forum-sec">
+			<div class="container">
+				<div class="forum-links">
+					<ul>
+						<li class="active"><a href="#" title="">Posts</a></li>
+						<li><a href="#" title="">People</a></li>
+					</ul>
+				</div><!--forum-links end-->
+				<div class="forum-links-btn">
+					<a href="#" title=""><i class="fa fa-bars"></i></a>
+				</div>
+			</div>
+		</section>
+        <section class="forum-page" >
+			<div class="container" >
+				<div class="forum-questions-sec" >
+					<div class="row" >
+						<div class="col-lg-8">
+							<div class="forum-questions" >
+								<div class="usr-question">
+
+									<div class="usr_quest" >
+										<h3>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h3>
+									</div><!--usr_quest end-->
+
+								</div><!--usr-question end-->
+
+
+						</div>
+
+				</div><!--forum-questions-sec end-->
+			</div>
+                </div>
+            </div>
+
+		</section><!--forum-page end-->
+        <div class="companies-list">
+					<div class="row">
+						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
+							<div class="company_profile_info">
+								<div class="company-up-info">
+									<img src="http://via.placeholder.com/91x91" alt="">
+									<h3>John Doe</h3>
+									<h4>Graphic Designer</h4>
+									<ul>
+										<li><a href="#" title="" class="follow">Follow</a></li>
+										<li><a href="#" title="" class="message-us"><i class="fa fa-envelope"></i></a></li>
+										<li><a href="#" title="" class="hire-us">Hire</a></li>
+									</ul>
+								</div>
+								<a href="#" title="" class="view-more-pro">View Profile</a>
+							</div><!--company_profile_info end-->
+						</div>
+
+						</div>
+					</div>
+				</div><!--companies-list end-->
+
+
+
+
+
+
+
+	<script>
+
+	//	notification section
+
+
+		function update(){
+		console.log("Updating..")
+		document.getElementById('noti-panel').innerHTML=""
+		fetchNotification();
+
+	}
+	var myGlobalTemp;
+	function start(){
+		console.log("INITIATED");
+
+		myVar = setInterval(update,4000);
+		myGlobalTemp = myVar;
+	}
+
+	function fetchNotification(){
+		console.log('fetching noti');
+		$.ajax({
+				   type: "GET",
+				   url: "{% url 'fetchNotification' %}",
+
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+						  	console.log(response.data)
+							  data = response.data
+							parsedjson = JSON.parse(JSON.stringify(response.data))
+
+							c=document.getElementById("noti-count")
+
+							c.innerText = data.length;
+
+						  	temp = document.getElementById('noti-panel')
+						  	for(var i=data.length-1;i>=0;i--)
+							{
+								if(parsedjson[i]["type"]=="COMMENT")
+								{
+									temp.innerHTML +=  "<div style=' color: black;height: 50px ;margin-top: auto;margin-inside: auto; padding: 5px'><a style='color: black' href='../post/"+ parsedjson[i]["postId"] +"'<div>"+ parsedjson[i]["sender_id"] +" has commented on your post </div></a></div>";
+								}
+								else if(parsedjson[i]["type"]=="UP")
+								{
+									temp.innerHTML +=  "<div style=' color: black;height: 50px ;margin-top: auto;margin-inside: auto; padding: 5px'><a style='color: black' href='../post/"+ parsedjson[i]["postId"] +"'<div>"+ parsedjson[i]["sender_id"] +" has upvoted your post </div></a></div>";
+
+								}
+								else if (parsedjson[i]["type"] == "DOWN")
+								{
+									temp.innerHTML +=  "<div style=' color: black;height: 50px ;margin-top: auto;margin-inside: auto; padding: 5px'><a style='color: black' href='../post/"+ parsedjson[i]["postId"] +"'<div>"+ parsedjson[i]["sender_id"] +" has downvoted your post </div></a></div>";
+
+								}
+								else if (parsedjson[i]["type"]=="FOLLOW")
+								{
+									temp.innerHTML +=  "<div style=' color: black;height: 50px ;margin-top: auto;margin-inside: auto; padding: 5px'><a style='color: black' href='../viewProfile/"+ parsedjson[i]["profile_id"] +"'<div>"+ parsedjson[i]["sender_id"] +" has started following you </div></a></div>";
+
+								}
+
+							}
+
+
+
+                          }
+					      else{
+					      	console.log("No notifications")
+
+						  }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+
+	}
+
+	function markAllAsRead()
+	{
+		$.ajax({
+				   type: "GET",
+				   url: "{% url 'mark_all_as_read' %}",
+
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1)
+						  {
+							  // followed
+                              console.log("Notifications cleared")
+
+                          }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+	}
+
+
+	</script>
+
+
+
+<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/popper.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.mCustomScrollbar.js' %}"></script>
+<script type="text/javascript" src="{% static 'lib/slick/slick.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/script.js' %}"></script>
+
+
+</body>
+</html>

@@ -103,7 +103,51 @@
 									<div class="user_profile ">
 										<div class="user-pro-img">
 											<img src="{{user.profile_pic}}" alt="" width="170" height="170">
-											<a href="#" title=""><i class="fa fa-pencil"></i></a>
+											<a  title="" style="cursor: pointer" data-toggle="modal" data-target="#editProfileModal"><i class="fa fa-pencil"></i></a>
+
+
+
+											<!-- Modal -->
+											<div id="editProfileModal" class="modal fade" role="dialog">
+											  <div class="modal-dialog">
+
+												<!-- Modal content-->
+												<div class="modal-content">
+												  <div class="modal-header">
+													  <h4 class="modal-title">Edit Profile</h4>
+													<button type="button" class="close" data-dismiss="modal">&times;</button>
+
+												  </div>
+													<form action="/saveEditProfile" method="post" enctype="multipart/form-data">
+														{% csrf_token %}
+												  <div class="modal-body">
+													 <div class="input-group">
+														<span class="input-group-addon"><i class="la la-user"></i></span>
+														<input id="newname" type="text" class="form-control" name="name" value="{{user.name}}">
+													  </div>
+													  <br>
+													   <div class="input-group">
+														<span class="input-group-addon"><i class="la la-copy" ></i></span>
+														<input id="newstatus" type="text" class="form-control" placeholder="status" name="status" value="{{user.status}}">
+													  </div>
+													  <br>
+													  <div class="input-group">
+														<span class="input-group-addon"><i class="la la-image" ></i></span>
+														<input id="newimage" type="file" class="form-control" placeholder="Status" name="profile_pic" >
+													  </div>
+												  </div>
+												  <div class="modal-footer">
+													  <button  type="submit" style="cursor: pointer ;background: #3c8dbc" class="btn btn-success">Save Changes</button>
+													<button type="button" style="cursor: pointer" class="btn btn-danger" data-dismiss="modal">Close</button>
+												  </div>
+													</form>
+												</div>
+
+											  </div>
+											</div>
+
+
+
 										</div><!--user-pro-img end-->
 										<div class="user_pro_status">
 											
@@ -255,7 +299,7 @@
 
 
 											{% for post in newsFeedPosts %}
-										<div class="post-bar">
+										<div class="post-bar" id="post-div-{{post.post.id}}">
 
 											<div class="post_topbar">
 												<div class="usy-dt">
@@ -265,6 +309,11 @@
 														<span><img src="{% static 'images/clock.png' %}" alt="">{{post.post.date_time}}</span>
 													</div>
 												</div>
+												
+												<div class="ed-opts">
+														<a id="post-{{post.post.id}}" name="" onclick="deletePost(this.id)" style="cursor:pointer;" title="" class="ed-opts-open"><i class="la la-trash"></i></a>
+														
+													</div>
 											</div>
 											<div class="job_descp">
 												<a href="/post/{{post.post.id}}" ><h3 style="text-decoration: underline">{{post.post.title}}</h3></a>
@@ -568,7 +617,7 @@
 		  $.ajax({
 				   type: "POST",
 				   url: "{% url 'followAjax' %}",
-				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   data: {'slug': postId, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
 				   dataType: "json",
 				   success: function(response) {
 						  console.log(response.message);
@@ -592,6 +641,38 @@
 					}
 			  });
 		}
+
+
+	function deletePost(id)
+	{
+		console.log(id);
+		x = id.split('-')
+		console.log(x[1])
+
+		x=x[1]
+
+		$.ajax({
+				   type: "POST",
+				   url: "{% url 'deletePost' %}",
+				   data: {'slug': x.toString(), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   dataType: "json",
+				   success: function(response) {
+						  console.log(response.message);
+					      if(response.message == 1) {
+							  // followed
+							  console.log($("post-div-"+x))
+							  $("#post-div-"+x).remove();
+
+						  }
+
+					},
+					error: function(rs, e) {
+						   alert(rs.responseText);
+					}
+			  });
+
+	}
+
 
 
 
