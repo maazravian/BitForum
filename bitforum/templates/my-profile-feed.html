@@ -617,7 +617,7 @@
 		  $.ajax({
 				   type: "POST",
 				   url: "{% url 'followAjax' %}",
-				   data: {'slug': postId, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				   data: {'slug': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
 				   dataType: "json",
 				   success: function(response) {
 						  console.log(response.message);
