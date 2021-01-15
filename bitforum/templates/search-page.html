@@ -34,7 +34,8 @@
 						<a href="../" title=""><img src="{% static 'images/logo.png' %}" height="50" width="50" alt=""></a>
 					</div><!--logo end-->
 					<div class="search-bar">
-						<form>
+						<form action="search" method="post">
+							{% csrf_token %}
 							<input type="text" name="search" placeholder="Search...">
 							<button type="submit"><i class="la la-search"></i></button>
 						</form>
@@ -83,13 +84,15 @@
 							<h3 class="tc"><a href="/logout" title="">Logout</a></h3>
 						</div><!--user-account-settingss end-->
 					</div>
+                </div>
+            </div>
 		</header>
         <section class="forum-sec">
 			<div class="container">
 				<div class="forum-links">
 					<ul>
-						<li class="active"><a href="#" title="">Posts</a></li>
-						<li><a href="#" title="">People</a></li>
+						<li id="post" class="active"><a  href="#"  id="btn-post" title="" style="cursor:pointer" disabled>Posts</a></li>
+						<li id="people" ><a  href="#"  id="btn-people" title="" style="cursor:pointer">People</a></li>
 					</ul>
 				</div><!--forum-links end-->
 				<div class="forum-links-btn">
@@ -97,50 +100,87 @@
 				</div>
 			</div>
 		</section>
-        <section class="forum-page" >
+        <section class="forum-page" id="post-data">
 			<div class="container" >
 				<div class="forum-questions-sec" >
 					<div class="row" >
 						<div class="col-lg-8">
 							<div class="forum-questions" >
-								<div class="usr-question">
 
+
+									{% if postsSearched %}
+
+									{% for post in postsSearched %}
+
+								<div class="usr-question">
 									<div class="usr_quest" >
-										<h3>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h3>
+										<a href="post/{{post.id}}"><h3 >{{ post.title }}</h3></a>
 									</div><!--usr_quest end-->
 
-								</div><!--usr-question end-->
+									</div><!--usr-question end-->
+									{% endfor %}
+
+									{% else %}
+
+								<div class="usr-question">
+									<div class="usr_quest" >
+										<h3>No search results...</h3>
+									</div><!--usr_quest end-->
+								</div>
+
+									{% endif %}
 
 
 						</div>
-
 				</div><!--forum-questions-sec end-->
 			</div>
                 </div>
             </div>
 
 		</section><!--forum-page end-->
-        <div class="companies-list">
+		<section class="forum-page" id="people-data" style="display: none">
+			<div class="container">
+        <div class="companies-list " >
 					<div class="row">
+
+
+							{% if userSearched %}
+
+							{% for user in userSearched %}
+
 						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
 							<div class="company_profile_info">
 								<div class="company-up-info">
-									<img src="http://via.placeholder.com/91x91" alt="">
-									<h3>John Doe</h3>
-									<h4>Graphic Designer</h4>
-									<ul>
-										<li><a href="#" title="" class="follow">Follow</a></li>
-										<li><a href="#" title="" class="message-us"><i class="fa fa-envelope"></i></a></li>
-										<li><a href="#" title="" class="hire-us">Hire</a></li>
-									</ul>
+									<img src="{{user.profile_pic}}" alt="">
+									<h3>{{user.name}}</h3>
+									<h4>{{user.status}}</h4>
 								</div>
-								<a href="#" title="" class="view-more-pro">View Profile</a>
+								<a href="viewProfile/{{user.id}}" title="" class="view-more-pro">View Profile</a>
 							</div><!--company_profile_info end-->
 						</div>
+							{% endfor %}
+
+							{% else %}
+
+							<div class="usr-question">
+								<div class="usr_quest" >
+										<h3>No search results...</h3>
+									</div><!--usr_quest end-->
+							</div>
+
+							{% endif %}
+
 
 						</div>
-					</div>
 				</div><!--companies-list end-->
+				</div>
+		</section>
+
+
+
+
+
+
 
 
 
@@ -248,6 +288,42 @@
 						   alert(rs.responseText);
 					}
 			  });
+	}
+	//  function toggle_visibility(id) {
+    //    var e = document.getElementById(id);
+	//
+    //    if(e.style.display == 'block') {
+	// 	   e.style.display = 'none';
+	// 	   id.className = 'active'
+	//    }
+    //    else
+    //       e.style.display = 'block';
+    // }
+	people = document.getElementById('btn-people');
+	topics = document.getElementById('btn-post');
+	people_data = document.getElementById('people-data');
+	topic_data = document.getElementById('post-data');
+	post_li=document.getElementById('post')
+	people_li=document.getElementById('people')
+
+	people.onclick = function(){
+		console.log('clicked')
+		people.disabled = true;
+		people.className='active';
+		topics.disabled = false;
+		people_li.className='active';
+		post_li.className='';
+
+		topic_data.style.display = "none";
+		people_data.style.display = "block";
+	}
+	topics.onclick = function(){
+		people.disabled = false;
+		topics.disabled = true;
+		topic_data.style.display = "block";
+		people_data.style.display = "none";
+		people_li.className='';
+		post_li.className='active';
 	}
 
 

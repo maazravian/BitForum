@@ -34,7 +34,8 @@
 						<a href="../" title=""><img src="{% static 'images/logo.png' %}" height="50" width="50" alt=""></a>
 					</div><!--logo end-->
 					<div class="search-bar">
-						<form>
+						<form action="search" method="post">
+							{% csrf_token %}
 							<input type="text" name="search" placeholder="Search...">
 							<button type="submit"><i class="la la-search"></i></button>
 						</form>
@@ -364,11 +365,7 @@
 
 											<!--post-bar end-->
 											<div class="process-comm">
-												<div class="spinner">
-													<div class="bounce1"></div>
-													<div class="bounce2"></div>
-													<div class="bounce3"></div>
-												</div>
+
 											</div><!--process-comm end-->
 										</div><!--posts-section end-->
 									</div><!--product-feed-tab end-->
@@ -407,9 +404,8 @@
 											{% endfor %}
 
 
-											<div class="view-more">
-												<a href="#" title="">View More</a>
-											</div>
+
+
 										</div><!--suggestions-list end-->
 									</div><!--suggestions end-->
 									</div><!--suggestions end-->

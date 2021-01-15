@@ -6,6 +6,7 @@ from django.http import HttpResponse
 import json
 from django.http import JsonResponse
 from django.db import models
+from django.db.models import Q
 
 
 def viewProfile(request,uid):
@@ -711,4 +712,17 @@ def saveEditProfile(request):
         return redirect(myProfile)
 def search(request):
     user = User.objects.get(email=request.session['email'])
-    return render(request,'search-page.html',{'currentUser':user})
+    if request.method == 'POST':
+        search = request.POST['search']
+        searchUser = User.objects.filter(Q(name__contains=search)|Q(status__contains=search)|Q(email__contains=search))
+        searchPosts = Post.objects.filter(
+            Q(title__contains=search) | Q(content__contains=search))
+
+        print(searchUser)
+        print(searchPosts)
+        if searchUser or searchPosts:
+            return render(request, 'search-page.html', {'currentUser': user, 'userSearched': searchUser,'postsSearched':searchPosts})
+        else:
+            return render(request, 'search-page.html', {'currentUser': user})
+
+
