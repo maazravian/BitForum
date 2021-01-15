@@ -300,6 +300,8 @@ def home(request):
 
         postsToShow = sorted(postsToShow, key=lambda k: k['post'].date_time)
         postsToShow = postsToShow[::-1]
+        print(postsToShow)
+
 
         for p in postsToShow:
             try:
@@ -364,7 +366,7 @@ def viewPost(request,pid):
     post.no_of_views +=1
     post.save()
     user = User.objects.get(email=request.session['email'])
-    commentsList = Comment.objects.filter(postId=pid)
+    commentsList = Comment.objects.filter(postId=pid).order_by('-no_of_up')
 
     topicsList = Contains.objects.filter(postId=pid)
     print(topicsList)
